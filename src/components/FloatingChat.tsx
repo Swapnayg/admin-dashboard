@@ -280,14 +280,18 @@ useEffect(() => {
               </button>
             </div>
           </div>
-        <div className="p-4 text-sm text-gray-700 h-[25rem] overflow-y-auto space-y-3">
+        <div className="flex flex-col h-[25rem] p-0">
             {!activeChat ? (
                 <>
                     <div className="text-sm text-gray-700 h-[25rem] overflow-y-auto space-y-3">
-                        <p>Welcome, {username.toUpperCase()}!</p>
+                      <div className="flex items-center justify-between  px-4 py-2 mb-3">
+                        <p className="text-indigo-700 text-sm font-semibold">
+                          👋 Welcome, {username.charAt(0).toUpperCase() + username.slice(1)}!
+                        </p>
+                      </div>
 
                         {/* Admin-only: Create Group Button */}
-                        {role === "admin" && (
+                        {/* {role === "admin" && (
                             <div className="mt-2">
                             <button
                                 onClick={() => setShowGroupForm(true)}
@@ -302,9 +306,9 @@ useEffect(() => {
                                 Create Group
                             </button>
                             </div>
-                        )}
+                        )} */}
                         {/* Tabs */}
-                        <div className="flex border-b">
+                        {/* <div className="flex border-b">
                             <button
                             className={`flex-1 px-4 py-2 text-sm font-medium ${
                                 activeTab === "students"
@@ -325,10 +329,10 @@ useEffect(() => {
                             >
                             Groups
                             </button>
-                        </div>
+                        </div> */}
 
                         {/* Content */}
-                        <div className="pt-2 max-h-[18rem] overflow-y-auto space-y-2">
+                        <div className="flex-1 overflow-y-auto px-4 pb-2 space-y-2">
                           {activeTab === "students" && (
                             <div className="space-y-2">
                               {/* Search Input */}
@@ -386,7 +390,7 @@ useEffect(() => {
                             </div>
                           )}
                           
-                            {activeTab === "groups" && (
+                            {/* {activeTab === "groups" && (
                             <div className="space-y-2">
                                 {groups.length === 0 ? (
                                 <p className="text-xs text-gray-500">No groups created yet.</p>
@@ -402,7 +406,7 @@ useEffect(() => {
                                 ))
                                 )}
                             </div>
-                            )}
+                            )} */}
                         </div>
                         </div>
                 </>
