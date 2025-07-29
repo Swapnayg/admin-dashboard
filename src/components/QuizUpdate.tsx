@@ -196,251 +196,259 @@ const QuizEditor: React.FC<QuizEditorProps> = ({ quizId, username = 'student' })
     }
   };
 
-
-  const renderAnswerEditor = (question: EditableQuestion) => {
-    // A helper to check if the current question is answered
-    let isAnswered = true;
-    if (question.questionType === 'MULTIPLE_CHOICE' && question.options) {
-      isAnswered = question.studentAnswer !== undefined && question.studentAnswer !== '';
-    } else if (question.questionType === 'TRUE_FALSE') {
-      isAnswered = question.studentAnswer === "True" || question.studentAnswer === "False";
-    } else {
-      isAnswered = question.studentAnswer !== undefined && question.studentAnswer !== '';
-    }
-
-    return (
-      <Card className={`border-slate-200 ${!isAnswered ? "border-red-400" : ""}`}>
-        <CardHeader className="bg-slate-50/50 border-b border-slate-200">
-          <div className="flex items-center justify-between">
-            <div>
-              <CardTitle className="text-lg text-slate-900">
-                Question {question.questionNumber}
-              </CardTitle>
-              <p className="text-sm text-slate-600 mt-1">{capitalizeSentences(question.questionText)}</p>
-            </div>
-            <div className="flex items-center space-x-2">
-              {editedQuestions.has(question.id) && (
-                <Badge variant="default" className="bg-emerald-100 text-emerald-800 border-emerald-300">
-                  <Check className="w-3 h-3 mr-1" />
-                  Edited
-                </Badge>
-              )}
-              <Badge variant="outline" className="text-slate-600 border-slate-300">
-                {question.questionType.replace('_', ' ')}
-              </Badge>
-            </div>
-          </div>
-        </CardHeader>
-        
-        <CardContent className="space-y-4 p-6">
-          {question.questionType === 'MULTIPLE_CHOICE' && question.options && (
-            <div>
-              <Label className="text-sm font-medium">Answer Options</Label>
-              <div className="space-y-2 mt-2">
-                {question.options.map((option, index) => (
-                  <div key={index} className="flex items-center space-x-3">
-                    <Badge variant="outline" className="w-8 text-center">
-                      {String.fromCharCode(65 + index)}
-                    </Badge>
-                    <Input
-                      value={option}
-                      onChange={(e) => handleOptionChange(question.id, index, e.target.value)}
-                      className="flex-1"
-                    />
-                    <div className="flex items-center space-x-2">
-                      <input
-                        type="radio"
-                        name={`correct-${question.id}`}
-                        checked={question.studentAnswer === option}
-                        onChange={() => handleCorrectAnswerChange(question.id, option)}
-                        className="w-4 h-4 text-emerald-600"
-                      />
-                      <Label className="text-sm text-slate-600">Correct</Label>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {question.questionType === 'TRUE_FALSE' && (
-            <div>
-              <Label className="text-sm font-medium">Correct Answer</Label>
-              <Select 
-                value={question.studentAnswer} 
-                onValueChange={(value) => handleCorrectAnswerChange(question.id, value)}
-              >
-                <SelectTrigger className="w-32 mt-2">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="True">True</SelectItem>
-                  <SelectItem value="False">False</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          )}
-
-          {(question.questionType === 'SHORT_TEXT' || 
-            question.questionType === 'NUMERICAL') && (
-            <div>
-              <Label htmlFor={`answer-${question.id}`} className="text-sm font-medium">
-                Correct Answer
-              </Label>
-              <Input
-                id={`answer-${question.id}`}
-                value={question.studentAnswer || ''}
-                onChange={(e) => handleCorrectAnswerChange(question.id, e.target.value)}
-                className="mt-2"
-                type={question.questionType === 'NUMERICAL' ? 'number' : 'text'}
-              />
-            </div>
-          )}
-
-          {(question.questionType === 'LONG_TEXT') && (
-            <div>
-              <Label htmlFor={`answer-${question.id}`} className="text-sm font-medium">
-                Correct Answer
-              </Label>
-              <Textarea 
-                id={`answer-${question.id}`} 
-                value={question.studentAnswer || ''} 
-                onChange={(e) => handleCorrectAnswerChange(question.id, e.target.value)} 
-                className="mt-2"
-              />
-            </div>
-          )}
-          
-          {/* Show warning if this question is unanswered */}
-          {!isAnswered && (
-            <div className="text-sm text-red-600 font-semibold mt-2">
-              This question must be answered before saving.
-            </div>
-          )}
-        </CardContent>
-      </Card>
-    );
-  };
-
-  const renderQuestionNavigator = () => {
-    if (!quiz) return null;
-
-    return (
-      <div className="bg-white border-r border-slate-200 p-4 h-full overflow-y-auto">
-        <div className="mb-4">
-          <h3 className="text-lg font-semibold text-slate-900 mb-2">Questions</h3>
-          <div className="flex items-center justify-between text-sm text-slate-600">
-            <span>Total: {quiz.questions.length}</span>
-            <span className="text-emerald-600 font-medium">
-              Edited: {editedQuestions.size}
-            </span>
-          </div>
-        </div>
-        
-        <div className="grid grid-cols-6 gap-2">
-          {quiz.questions.map((question, index) => {
-            const isEdited = editedQuestions.has(question.id);
-            const isCurrent = index === currentQuestionIndex;
-            
-            return (
-              <button
-                key={question.id}
-                onClick={() => setCurrentQuestionIndex(index)}
-                className={`
-                  w-10 h-10 rounded-md border text-sm font-medium transition-all duration-200
-                  flex items-center justify-center relative
-                  ${isCurrent 
-                    ? "bg-emerald-600 text-white border-emerald-600 shadow-md" 
-                    : isEdited
-                      ? "bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100"
-                      : "bg-white text-slate-700 border-slate-300 hover:bg-slate-50"
-                  }
-                `}
-              >
-                {question.questionNumber}
-                {isEdited && !isCurrent && (
-                  <div className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-500 rounded-full border border-white"></div>
-                )}
-              </button>
-            );
-          })}
-        </div>
-        
-        <div className="mt-6 pt-4 border-t border-slate-200">
-          <div className="text-xs text-slate-500 mb-2">Progress</div>
-          <div className="text-sm font-medium text-slate-700">
-            {currentQuestionIndex + 1} of {quiz.questions.length}
-          </div>
-          <div className="w-full bg-slate-200 rounded-full h-2 mt-2">
-            <div 
-              className="bg-emerald-600 h-2 rounded-full transition-all duration-300" 
-              style={{ width: `${((currentQuestionIndex + 1) / quiz.questions.length) * 100}%` }}
-            />
-          </div>
-          
-          {editedQuestions.size > 0 && (
-            <div className="mt-3 p-2 bg-emerald-50 rounded-md border border-emerald-200">
-              <div className="text-xs text-emerald-700 font-medium">
-                {editedQuestions.size} question{editedQuestions.size !== 1 ? 's' : ''} modified
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
-    );
-  };
-
-  if (!quiz) {
-    return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-slate-900 mx-auto mb-4"></div>
-          <p className="text-slate-600">Loading quiz editor...</p>
-        </div>
-      </div>
-    );
+const renderAnswerEditor = (question: EditableQuestion) => {
+  let isAnswered = true;
+  if (question.questionType === 'MULTIPLE_CHOICE' && question.options) {
+    isAnswered = question.studentAnswer !== undefined && question.studentAnswer !== '';
+  } else if (question.questionType === 'TRUE_FALSE') {
+    isAnswered = question.studentAnswer === "True" || question.studentAnswer === "False";
+  } else {
+    isAnswered = question.studentAnswer !== undefined && question.studentAnswer !== '';
   }
 
-  const currentQuestion = quiz.questions[currentQuestionIndex];
-
   return (
-    <div className="min-h-screen bg-slate-50 flex">
-      <div className="flex-1">
-        <div className="bg-white border-b border-slate-200 shadow-sm">
-          <div className="px-6 py-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-4">
-                <div>
-                  <h1 className="text-2xl font-bold text-slate-900 flex items-center">
-                    <Edit3 className="w-6 h-6 mr-2" />
-                    Edit Answers: {capitalizeSentences(quiz.title)}
-                  </h1>
-                  <div className="flex items-center space-x-3 mt-1">
-                    <Badge variant="outline" className="text-slate-600 border-slate-300">
-                      {quiz.subject} • {quiz.grade}
-                    </Badge>
-                    <Badge variant="outline" className="text-slate-500 border-slate-200">
-                      {quiz.questions.length} questions • {quiz.totalMarks} marks
-                    </Badge>
-                    {editedQuestions.size > 0 && (
-                      <Badge variant="default" className="bg-emerald-100 text-emerald-800 border-emerald-300">
-                        {editedQuestions.size} edited
-                      </Badge>
-                    )}
+    <Card className={`border-slate-200 ${!isAnswered ? "border-red-400" : ""}`}>
+      <CardHeader className="bg-slate-50/50 border-b border-slate-200">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+          <div>
+            <CardTitle className="text-base md:text-lg text-slate-900">
+              Question {question.questionNumber}
+            </CardTitle>
+            <p className="text-sm text-slate-600 mt-1">
+              {capitalizeSentences(question.questionText)}
+            </p>
+          </div>
+          <div className="flex flex-wrap items-center gap-2">
+            {editedQuestions.has(question.id) && (
+              <Badge variant="default" className="bg-emerald-100 text-emerald-800 border-emerald-300">
+                <Check className="w-3 h-3 mr-1" />
+                Edited
+              </Badge>
+            )}
+            <Badge variant="outline" className="text-slate-600 border-slate-300">
+              {question.questionType.replace('_', ' ')}
+            </Badge>
+          </div>
+        </div>
+      </CardHeader>
+
+      <CardContent className="space-y-6 p-4 sm:p-6">
+        {/* MULTIPLE CHOICE */}
+        {question.questionType === 'MULTIPLE_CHOICE' && question.options && (
+          <div>
+            <Label className="text-sm font-medium">Answer Options</Label>
+            <div className="space-y-3 mt-2">
+              {question.options.map((option, index) => (
+                <div key={index} className="flex flex-col sm:flex-row sm:items-center gap-3">
+                  <Badge variant="outline" className="w-8 text-center shrink-0">
+                    {String.fromCharCode(65 + index)}
+                  </Badge>
+                  <Input
+                    value={option}
+                    onChange={(e) => handleOptionChange(question.id, index, e.target.value)}
+                    className="flex-1 w-full"
+                  />
+                  <div className="flex items-center space-x-2">
+                    <input
+                      type="radio"
+                      name={`correct-${question.id}`}
+                      checked={question.studentAnswer === option}
+                      onChange={() => handleCorrectAnswerChange(question.id, option)}
+                      className="w-4 h-4 text-emerald-600"
+                    />
+                    <Label className="text-sm text-slate-600">Correct</Label>
                   </div>
                 </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* TRUE FALSE */}
+        {question.questionType === 'TRUE_FALSE' && (
+          <div>
+            <Label className="text-sm font-medium">Correct Answer</Label>
+            <Select
+              value={question.studentAnswer}
+              onValueChange={(value) => handleCorrectAnswerChange(question.id, value)}
+            >
+              <SelectTrigger className="w-full sm:w-32 mt-2">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="True">True</SelectItem>
+                <SelectItem value="False">False</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        )}
+
+        {/* SHORT TEXT or NUMERICAL */}
+        {(question.questionType === 'SHORT_TEXT' || question.questionType === 'NUMERICAL') && (
+          <div>
+            <Label htmlFor={`answer-${question.id}`} className="text-sm font-medium">
+              Correct Answer
+            </Label>
+            <Input
+              id={`answer-${question.id}`}
+              value={question.studentAnswer || ''}
+              onChange={(e) => handleCorrectAnswerChange(question.id, e.target.value)}
+              className="mt-2 w-full"
+              type={question.questionType === 'NUMERICAL' ? 'number' : 'text'}
+            />
+          </div>
+        )}
+
+        {/* LONG TEXT */}
+        {question.questionType === 'LONG_TEXT' && (
+          <div>
+            <Label htmlFor={`answer-${question.id}`} className="text-sm font-medium">
+              Correct Answer
+            </Label>
+            <Textarea
+              id={`answer-${question.id}`}
+              value={question.studentAnswer || ''}
+              onChange={(e) => handleCorrectAnswerChange(question.id, e.target.value)}
+              className="mt-2 w-full"
+            />
+          </div>
+        )}
+
+        {/* Warning Message */}
+        {!isAnswered && (
+          <div className="text-sm text-red-600 font-semibold">
+            This question must be answered before saving.
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  );
+};
+
+const renderQuestionNavigator = () => {
+  if (!quiz) return null;
+
+  return (
+    <div className="bg-white border-r border-slate-200 p-4 h-full overflow-y-auto w-full sm:w-72">
+      {/* Header */}
+      <div className="mb-4">
+        <h3 className="text-base sm:text-lg font-semibold text-slate-900 mb-2">Questions</h3>
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between text-sm text-slate-600 gap-1">
+          <span>Total: {quiz.questions.length}</span>
+          <span className="text-emerald-600 font-medium">
+            Edited: {editedQuestions.size}
+          </span>
+        </div>
+      </div>
+
+      {/* Question Grid */}
+      <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 gap-2">
+        {quiz.questions.map((question, index) => {
+          const isEdited = editedQuestions.has(question.id);
+          const isCurrent = index === currentQuestionIndex;
+
+          return (
+            <button
+              key={question.id}
+              onClick={() => setCurrentQuestionIndex(index)}
+              className={`
+                w-9 h-9 sm:w-10 sm:h-10 rounded-md border text-sm font-medium transition-all duration-200
+                flex items-center justify-center relative
+                ${isCurrent
+                  ? "bg-emerald-600 text-white border-emerald-600 shadow-md"
+                  : isEdited
+                  ? "bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100"
+                  : "bg-white text-slate-700 border-slate-300 hover:bg-slate-50"
+                }
+              `}
+            >
+              {question.questionNumber}
+              {isEdited && !isCurrent && (
+                <div className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-500 rounded-full border border-white" />
+              )}
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Progress */}
+      <div className="mt-6 pt-4 border-t border-slate-200">
+        <div className="text-xs text-slate-500 mb-2">Progress</div>
+        <div className="text-sm font-medium text-slate-700">
+          {currentQuestionIndex + 1} of {quiz.questions.length}
+        </div>
+        <div className="w-full bg-slate-200 rounded-full h-2 mt-2">
+          <div
+            className="bg-emerald-600 h-2 rounded-full transition-all duration-300"
+            style={{ width: `${((currentQuestionIndex + 1) / quiz.questions.length) * 100}%` }}
+          />
+        </div>
+
+        {editedQuestions.size > 0 && (
+          <div className="mt-3 p-2 bg-emerald-50 rounded-md border border-emerald-200">
+            <div className="text-xs text-emerald-700 font-medium">
+              {editedQuestions.size} question{editedQuestions.size !== 1 ? 's' : ''} modified
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+if (!quiz) {
+  return (
+    <div className="min-h-screen bg-slate-50 flex items-center justify-center px-4">
+      <div className="text-center">
+        <div className="animate-spin rounded-full h-10 w-10 sm:h-12 sm:w-12 border-b-2 border-slate-900 mx-auto mb-4"></div>
+        <p className="text-sm sm:text-base text-slate-600">Loading quiz editor...</p>
+      </div>
+    </div>
+  );
+}
+
+const currentQuestion = quiz.questions[currentQuestionIndex];
+
+
+  return (
+   <div className="min-h-screen bg-slate-50 flex flex-col lg:flex-row">
+      {/* Main Content Area */}
+      <div className="flex-1">
+        {/* Header */}
+        <div className="bg-white border-b border-slate-200 shadow-sm">
+          <div className="px-4 sm:px-6 py-4">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+              <div>
+                <h1 className="text-xl sm:text-2xl font-bold text-slate-900 flex items-center">
+                  <Edit3 className="w-5 h-5 sm:w-6 sm:h-6 mr-2" />
+                  Edit Answers: {capitalizeSentences(quiz.title)}
+                </h1>
+                <div className="flex flex-wrap items-center gap-2 mt-2">
+                  <Badge variant="outline" className="text-slate-600 border-slate-300">
+                    {quiz.subject} • {quiz.grade}
+                  </Badge>
+                  <Badge variant="outline" className="text-slate-500 border-slate-200">
+                    {quiz.questions.length} questions • {quiz.totalMarks} marks
+                  </Badge>
+                  {editedQuestions.size > 0 && (
+                    <Badge variant="default" className="bg-emerald-100 text-emerald-800 border-emerald-300">
+                      {editedQuestions.size} edited
+                    </Badge>
+                  )}
+                </div>
               </div>
+
               <Button
                 onClick={saveQuiz}
                 disabled={isSaving || !allQuestionsAnswered}
-                className={`bg-emerald-600 hover:bg-emerald-700 text-white ${(!allQuestionsAnswered ? "opacity-60 cursor-not-allowed" : "")}`}
+                className={`bg-emerald-600 hover:bg-emerald-700 text-white ${!allQuestionsAnswered ? "opacity-60 cursor-not-allowed" : ""}`}
                 title={!allQuestionsAnswered ? "Answer all questions to enable saving" : ""}
               >
                 <Save className="w-4 h-4 mr-2" />
                 {isSaving ? 'Saving...' : 'Save Answers'}
               </Button>
             </div>
-            {/* Show save-disabled message if not all questions have answers */}
+
             {!allQuestionsAnswered && (
               <div className="mt-2 text-sm text-red-700 font-medium">
                 All questions must be answered to save changes.
@@ -449,10 +457,11 @@ const QuizEditor: React.FC<QuizEditorProps> = ({ quizId, username = 'student' })
           </div>
         </div>
 
-        <div className="p-6">
+        {/* Question Editor */}
+        <div className="p-4 sm:p-6">
           <div className="space-y-6">
-            <div className="flex items-center justify-between">
-              <h2 className="text-xl font-semibold text-slate-900">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+              <h2 className="text-lg sm:text-xl font-semibold text-slate-900">
                 Editing Question {currentQuestion.questionNumber}
               </h2>
               <div className="flex space-x-2">
@@ -474,14 +483,18 @@ const QuizEditor: React.FC<QuizEditorProps> = ({ quizId, username = 'student' })
                 </Button>
               </div>
             </div>
+
             {renderAnswerEditor(currentQuestion)}
           </div>
         </div>
       </div>
-      <div className="w-80 min-h-screen">
+
+      {/* Sidebar Navigator */}
+      <div className="w-full lg:w-80 border-t lg:border-t-0 lg:border-l border-slate-200">
         {renderQuestionNavigator()}
       </div>
     </div>
+
   );
 };
 

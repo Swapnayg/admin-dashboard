@@ -112,109 +112,76 @@ const loadFilteredResults = async (examId: string) => {
   const totalPages = Math.ceil(filteredResults.length / PAGE_SIZE);
 
   return (
-    <Card className="mt-8">
+<div className="bg-white p-4 rounded-md flex-1 m-2 sm:m-4 mt-0">
+  <Card className="w-full mt-6">
+
+
+
       <CardHeader>
         <CardTitle className="text-xl font-bold">Results Dashboard</CardTitle>
       </CardHeader>
+
       <CardContent>
         {/* Filters */}
-       <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
-        {/* Left: Filters */}
-        <div className="flex flex-wrap gap-4">
-          <select
-            value={selectedExam}
-            onChange={(e) => {
-              const id = e.target.value;
-              setSelectedExam(id);
-            }}
-            className="px-3 py-2 border rounded-md w-60"
-          >
-            <option value="">Select Exam</option>
-            {exams.map((e) => (
-              <option key={e.id} value={e.id}>{e.title}</option>
-            ))}
-          </select>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+          {/* Left: Filters */}
+          <div className="flex flex-col sm:flex-row flex-wrap gap-3">
+            <select
+              value={selectedExam}
+              onChange={(e) => setSelectedExam(e.target.value)}
+              className="px-3 py-2 border rounded-md w-full sm:w-60"
+            >
+              <option value="">Select Exam</option>
+              {exams.map((e) => (
+                <option key={e.id} value={e.id}>{e.title}</option>
+              ))}
+            </select>
+          </div>
 
-          {/* Uncomment if needed later
-          <select
-            value={grade}
-            onChange={(e) => setGrade(e.target.value)}
-            className="px-3 py-2 border rounded-md"
-          >
-            <option value="">All Grades</option>
-            <option value="Grade 10">Grade 10</option>
-            <option value="Grade 11">Grade 11</option>
-            <option value="Grade 12">Grade 12</option>
-          </select>
-
-          <select
-            value={subject}
-            onChange={(e) => setSubject(e.target.value)}
-            className="px-3 py-2 border rounded-md"
-          >
-            <option value="">All Subjects</option>
-            <option value="Mathematics">Mathematics</option>
-            <option value="Science">Science</option>
-            <option value="English">English</option>
-          </select>
-          */}
-        </div>
-
-        {/* Right: Buttons */}
-        <div className="flex gap-3">
-          <Button onClick={handleExportAll} disabled={!filteredResults.length}>
-            Export Excel
-          </Button>
-          <Button onClick={handlePrint} disabled={!filteredResults.length}>
-            Print / PDF
-          </Button>
-        </div>
-      </div>
-
-      {selectedExamDetails && (
-        <div className="bg-slate-50 px-4 py-2 rounded-md mb-4 shadow-sm border">
-          <h2 className="text-lg font-semibold mb-3">{selectedExamDetails.title}</h2>
-          <div className="flex flex-wrap items-center gap-x-10 gap-y-3 text-sm text-slate-700">
-            <div>
-              <span className="font-medium">Total Marks:</span> {selectedExamDetails.totalMarks}
-            </div>
-            <div>
-              <span className="font-medium">Total MCQs:</span> {selectedExamDetails.totalMCQ}
-            </div>
-            <div>
-              <span className="font-medium">Time Limit:</span> {selectedExamDetails.timeLimit} min
-            </div>
-            <div>
-              <span className="font-medium">Registered:</span> {totalStudents}
-            </div>
-            <div>
-              <span className="font-medium">Attempted:</span> {filteredResults.length}
-            </div>
-            <div>
-              <span className="font-medium">Not Attempted:</span> {totalStudents - filteredResults.length}
-            </div>
-            <div>
-              <span className="font-medium">Result Announced:</span>{" "}
-              {selectedExamDetails.resultDate ? (
-                <span className="text-slate-700">
-                  {new Date(selectedExamDetails.resultDate).toLocaleDateString()}
-                </span>
-              ) : (
-                <span className="text-red-600 font-semibold ml-1">Not Declared</span>
-              )}
-            </div>
+          {/* Right: Buttons */}
+          <div className="flex flex-col sm:flex-row gap-3">
+            <Button onClick={handleExportAll} disabled={!filteredResults.length}>
+              Export Excel
+            </Button>
+            <Button onClick={handlePrint} disabled={!filteredResults.length}>
+              Print / PDF
+            </Button>
           </div>
         </div>
-      )}
+
+        {/* Exam Info Box */}
+        {selectedExamDetails && (
+          <div className="bg-slate-50 px-4 py-2 rounded-md mb-4 shadow-sm border">
+            <h2 className="text-lg font-semibold mb-3">{selectedExamDetails.title}</h2>
+            <div className="flex flex-wrap items-center gap-x-10 gap-y-3 text-sm text-slate-700">
+              <div><span className="font-medium">Total Marks:</span> {selectedExamDetails.totalMarks}</div>
+              <div><span className="font-medium">Total MCQs:</span> {selectedExamDetails.totalMCQ}</div>
+              <div><span className="font-medium">Time Limit:</span> {selectedExamDetails.timeLimit} min</div>
+              <div><span className="font-medium">Registered:</span> {totalStudents}</div>
+              <div><span className="font-medium">Attempted:</span> {filteredResults.length}</div>
+              <div><span className="font-medium">Not Attempted:</span> {totalStudents - filteredResults.length}</div>
+              <div>
+                <span className="font-medium">Result Announced:</span>{" "}
+                {selectedExamDetails.resultDate ? (
+                  <span className="text-slate-700">
+                    {new Date(selectedExamDetails.resultDate).toLocaleDateString()}
+                  </span>
+                ) : (
+                  <span className="text-red-600 font-semibold ml-1">Not Declared</span>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Results Table */}
-        <div id="results-table">
+        <div id="results-table" className="overflow-x-auto">
           {loading ? (
             <p>Loading...</p>
           ) : results.length === 0 ? (
             <p>No results found.</p>
           ) : (
-            <table className="w-full border text-sm">
+            <table className="w-full border text-sm min-w-[800px]">
               <thead>
                 <tr className="bg-slate-100">
                   <th className="p-2 text-left">Student</th>
@@ -225,13 +192,12 @@ const loadFilteredResults = async (examId: string) => {
                   <th className="p-2 text-left">Incorrect</th>
                   <th className="p-2 text-left">Submitted</th>
                   <th className="p-2 text-left">Rank</th>
-                  <th className="p-2 text-center">Actions</th>    
+                  <th className="p-2 text-center">Actions</th>
                 </tr>
               </thead>
               <tbody>
-                {results.map((r, i) => (
+                {results.map((r) => (
                   <tr key={r.id} className="border-t">
-                    
                     <td className="p-2">{r.student.name}</td>
                     <td className="p-2">{r.exam.grades.map((g: { level: any; }) => g.level).join(", ")}</td>
                     <td className="p-2">{r.exam.subject.name}</td>
@@ -241,16 +207,18 @@ const loadFilteredResults = async (examId: string) => {
                     <td className="p-2">{new Date(r.gradedAt).toLocaleString()}</td>
                     <td className="p-2">{r.grade}</td>
                     <td className="p-2 text-center">
-                     <Link href={`/list/students/${r.quizAttempt.quizId}/quizview?studentName=${r.student.cnicNumber}&userRole=admin`}>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        className="inline-flex items-center gap-1 text-slate-700 border-slate-300 hover:bg-slate-100 hover:border-slate-400 transition"
+                      <Link
+                        href={`/list/students/${r.quizAttempt.quizId}/quizview?studentName=${r.student.cnicNumber}&userRole=admin`}
                       >
-                        <Eye className="w-4 h-4" />
-                        View
-                      </Button>
-                    </Link>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="inline-flex items-center gap-1 text-slate-700 border-slate-300 hover:bg-slate-100 hover:border-slate-400 transition"
+                        >
+                          <Eye className="w-4 h-4" />
+                          View
+                        </Button>
+                      </Link>
                     </td>
                   </tr>
                 ))}
@@ -260,7 +228,7 @@ const loadFilteredResults = async (examId: string) => {
         </div>
 
         {/* Pagination */}
-        <div className="flex justify-between items-center mt-4">
+        <div className="flex flex-col sm:flex-row justify-between items-center mt-4 gap-2">
           <Button disabled={currentPage === 1} onClick={() => handlePageChange(currentPage - 1)}>
             Previous
           </Button>
@@ -296,6 +264,7 @@ const loadFilteredResults = async (examId: string) => {
         )}
       </CardContent>
     </Card>
+</div>
   );
 };
 

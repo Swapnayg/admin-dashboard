@@ -147,119 +147,144 @@ const handleSubmit = async (e: React.FormEvent) => {
 
 
   return (
-    <div className="p-6 max-w-7xl mx-auto">
-      <div className="flex justify-between items-center mb-4">
-            <Input
-                placeholder="Search announcements..."
-                className="w-full max-w-sm"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-            />
+ <div className="p-4 sm:p-6 max-w-7xl mx-auto">
+  {/* Top Controls */}
+  <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+    <Input
+      placeholder="Search announcements..."
+      className="w-full sm:max-w-sm"
+      value={searchTerm}
+      onChange={(e) => setSearchTerm(e.target.value)}
+    />
 
-        <Dialog   open={open} onOpenChange={(isOpen) => { setOpen(isOpen); if (!isOpen || !editing) { resetForm(); } }}>
-          <DialogTrigger asChild>
-            <Button className="ml-4" onClick={() => setOpen(true)}>+ Add Announcement</Button>
-          </DialogTrigger>
-          <DialogContent className="max-w-2xl">
-            <DialogHeader>
-              <DialogTitle className="text-xl font-semibold">
-                {editing ? 'Edit' : 'Add'} Announcement
-              </DialogTitle>
-            </DialogHeader>
+    <Dialog
+      open={open}
+      onOpenChange={(isOpen) => {
+        setOpen(isOpen);
+        if (!isOpen || !editing) {
+          resetForm();
+        }
+      }}
+    >
+      <DialogTrigger asChild>
+        <Button className="w-full sm:w-auto" onClick={() => setOpen(true)}>+ Add Announcement</Button>
+      </DialogTrigger>
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto bg-white sm:rounded-lg p-4">
+  <DialogHeader>
+    <DialogTitle className="text-xl font-semibold">
+      {editing ? 'Edit' : 'Add'} Announcement
+    </DialogTitle>
+  </DialogHeader>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <Label>Title</Label>
-          <Input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} required />
-        </div>
-
-        <div>
-          <Label>Description</Label>
-          <Textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} required />
-        </div>
-
-        <div>
-          <Label>Type</Label>
-          <Select
-            value={form.type}
-            onValueChange={(value) =>
-              setForm({ ...form, type: value as "GENERAL" | "EXAM_RESULT", gradeIds: [], examIds: [], resultDate: "" })
-            }
-          >
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="Select announcement type" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="GENERAL">General</SelectItem>
-              <SelectItem value="EXAM_RESULT">Exam Result</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-
-        {form.type === "GENERAL" && (
+        {/* Form */}
+        <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <Label className="block mb-1">Grades</Label>
-
-            {/* Select All */}
-            <div className="mb-2">
-              <input
-                type="checkbox"
-                checked={form.isForAll}
-                onChange={(e) => {
-                  const checked = e.target.checked;
-                  setForm((prev) => ({
-                    ...prev,
-                    isForAll: checked,
-                    gradeIds: checked ? grades.map((g: any) => g.id) : [],
-                  }));
-                }}
-              />
-              <span className="ml-2 font-medium">Select All</span>
-            </div>
-
-            {/* Grade Options */}
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 border p-4 rounded bg-gray-50">
-              {grades.map((g: any) => (
-                <label key={g.id} className="flex items-center space-x-2">
-                  <input
-                    type="checkbox"
-                    value={g.id}
-                    checked={form.gradeIds.includes(g.id)}
-                    onChange={(e) => {
-                      const id = Number(e.target.value);
-                      const updated = e.target.checked
-                        ? [...form.gradeIds, id]
-                        : form.gradeIds.filter((gid) => gid !== id);
-                      setForm({ ...form, gradeIds: updated, isForAll: false });
-                    }}
-                  />
-                  <span>{g.level}</span>
-                </label>
-              ))}
-            </div>
+            <Label>Title</Label>
+            <Input
+              value={form.title}
+              onChange={(e) => setForm({ ...form, title: e.target.value })}
+              required
+            />
           </div>
-        )}
 
-        {form.type === "EXAM_RESULT" && (
-          <>
+          <div>
+            <Label>Description</Label>
+            <Textarea
+              value={form.description}
+              onChange={(e) => setForm({ ...form, description: e.target.value })}
+              required
+            />
+          </div>
+
+          <div>
+            <Label>Type</Label>
+            <Select
+              value={form.type}
+              onValueChange={(value) =>
+                setForm({
+                  ...form,
+                  type: value as "GENERAL" | "EXAM_RESULT",
+                  gradeIds: [],
+                  examIds: [],
+                  resultDate: ""
+                })
+              }
+            >
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Select announcement type" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="GENERAL">General</SelectItem>
+                <SelectItem value="EXAM_RESULT">Exam Result</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          {form.type === "GENERAL" && (
             <div>
-              <Label>Result Declaration Date</Label>
-              <Input
-                type="date"
-                value={form.resultDate ? form.resultDate.slice(0, 10) : ""}
-                onChange={(e) =>
-                  setForm({ ...form, resultDate: e.target.value })
-                }
-                required
-              />
-            </div>
+              <Label className="block mb-1">Grades</Label>
 
-            <div className="mt-4">
-              <Label>Select Exams</Label>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-2">
-                {exams.map((exam: any) => (
-                  <div key={exam.id} className="flex items-start gap-2 border p-3 rounded shadow-sm bg-gray-50" >
+              <div className="mb-2">
+                <input
+                  type="checkbox"
+                  checked={form.isForAll}
+                  onChange={(e) => {
+                    const checked = e.target.checked;
+                    setForm((prev) => ({
+                      ...prev,
+                      isForAll: checked,
+                      gradeIds: checked ? grades.map((g: any) => g.id) : [],
+                    }));
+                  }}
+                />
+                <span className="ml-2 font-medium">Select All</span>
+              </div>
+
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 border p-4 rounded bg-gray-50">
+                {grades.map((g: any) => (
+                  <label key={g.id} className="flex items-center space-x-2">
                     <input
+                      type="checkbox"
+                      value={g.id}
+                      checked={form.gradeIds.includes(g.id)}
+                      onChange={(e) => {
+                        const id = Number(e.target.value);
+                        const updated = e.target.checked
+                          ? [...form.gradeIds, id]
+                          : form.gradeIds.filter((gid) => gid !== id);
+                        setForm({ ...form, gradeIds: updated, isForAll: false });
+                      }}
+                    />
+                    <span>{g.level}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {form.type === "EXAM_RESULT" && (
+            <>
+              <div>
+                <Label>Result Declaration Date</Label>
+                <Input
+                  type="date"
+                  value={form.resultDate ? form.resultDate.slice(0, 10) : ""}
+                  onChange={(e) =>
+                    setForm({ ...form, resultDate: e.target.value })
+                  }
+                  required
+                />
+              </div>
+
+              <div className="mt-4">
+                <Label>Select Exams</Label>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-2">
+                  {exams.map((exam: any) => (
+                    <div
+                      key={exam.id}
+                      className="flex items-start gap-2 border p-3 rounded shadow-sm bg-gray-50"
+                    >
+                      <input
                         id={`exam-${exam.id}`}
                         type="checkbox"
                         value={exam.id}
@@ -275,66 +300,62 @@ const handleSubmit = async (e: React.FormEvent) => {
                         }}
                         className="accent-blue-600 mt-1"
                       />
-                  <label htmlFor={`exam-${exam.id}`} className="cursor-pointer">
-                    <div className="font-medium">{exam.title}</div>
-                    <div className="text-sm text-gray-500">
-                      Grades: {exam.grades?.map((g: any) => g.level).join(", ")}
+                      <label htmlFor={`exam-${exam.id}`} className="cursor-pointer">
+                        <div className="font-medium">{exam.title}</div>
+                        <div className="text-sm text-gray-500">
+                          Grades: {exam.grades?.map((g: any) => g.level).join(", ")}
+                        </div>
+                      </label>
                     </div>
-                  </label>
+                  ))}
                 </div>
-                ))}
               </div>
-            </div>
-          </>
-        )}
-
-        <div className="flex gap-2 justify-end">
-          {!editing && (
-            <Button type="button" variant="outline" onClick={resetForm}>
-              Reset
-            </Button>
+            </>
           )}
-          <Button type="submit" disabled={loading}>
-            {loading
-              ? editing
-                ? "Updating..."
-                : "Adding..."
-              : editing
-                ? "Update"
-                : "Add"} Announcement
-          </Button>
 
-        </div>
-      </form>
-
-          </DialogContent>
-      </Dialog>
-
-
-      <Dialog open={alertOpen} onOpenChange={setAlertOpen}>
-        <DialogContent className="max-w-md">
-          <DialogHeader>
-            <DialogTitle className="text-red-600">Validation Error</DialogTitle>
-          </DialogHeader>
-          <div className="text-sm text-gray-700 mb-4">{alertMessage}</div>
-          <div className="flex justify-end">
-            <Button onClick={() => setAlertOpen(false)}>OK</Button>
+          <div className="flex flex-wrap gap-2 justify-end">
+            {!editing && (
+              <Button type="button" variant="outline" onClick={resetForm}>
+                Reset
+              </Button>
+            )}
+            <Button type="submit" disabled={loading}>
+              {loading
+                ? editing
+                  ? "Updating..."
+                  : "Adding..."
+                : editing
+                  ? "Update"
+                  : "Add"} Announcement
+            </Button>
           </div>
-        </DialogContent>
-      </Dialog>
+        </form>
+      </DialogContent>
+    </Dialog>
+  </div>
 
+  {/* Table Section */}
+  <div className="border rounded-md overflow-auto">
+    <AnnouncementsTable
+      data={filtered}
+      onEdit={handleEdit}
+      onDelete={handleDelete}
+    />
+  </div>
 
+  {/* Validation Alert Dialog */}
+  <Dialog open={alertOpen} onOpenChange={setAlertOpen}>
+    <DialogContent className="max-w-md">
+      <DialogHeader>
+        <DialogTitle className="text-red-600">Validation Error</DialogTitle>
+      </DialogHeader>
+      <div className="text-sm text-gray-700 mb-4">{alertMessage}</div>
+      <div className="flex justify-end">
+        <Button onClick={() => setAlertOpen(false)}>OK</Button>
       </div>
+    </DialogContent>
+  </Dialog>
+</div>
 
-      <div className="border rounded-md overflow-auto">
-        {/* ✅ Replace table with DataTable */}
-           <AnnouncementsTable
-        data={filtered}
-        onEdit={handleEdit}
-        onDelete={handleDelete}
-      />
-
-      </div>
-    </div>
   );
 }
