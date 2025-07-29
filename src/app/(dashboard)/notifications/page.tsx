@@ -68,86 +68,88 @@ export default function NotificationsPage() {
   };
 
   return (
-    <div className="w-full px-6 py-6">
-      <div className="flex items-center justify-between mb-4">
-        <h1 className="text-2xl font-bold">All Notifications</h1>
-        <button
-          onClick={markAllAsRead}
-          disabled={unreadCount === 0}
-          className={`flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-md shadow transition 
-            ${unreadCount === 0 
-              ? "bg-gray-300 text-gray-500 cursor-not-allowed" 
-              : "bg-purple-600 text-white hover:bg-purple-700"}
-          `}
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="w-4 h-4"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M5 13l4 4L19 7"
-            />
-          </svg>
-          Mark all as read
-        </button>
-      </div>
+<div className="w-full px-4 sm:px-6 py-6">
+  {/* Header */}
+  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+    <h1 className="text-xl sm:text-2xl font-bold">All Notifications</h1>
+    <button
+      onClick={markAllAsRead}
+      disabled={unreadCount === 0}
+      className={`flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-md shadow transition whitespace-nowrap
+        ${unreadCount === 0 
+          ? "bg-gray-300 text-gray-500 cursor-not-allowed" 
+          : "bg-purple-600 text-white hover:bg-purple-700"}
+      `}
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        className="w-4 h-4"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={2}
+          d="M5 13l4 4L19 7"
+        />
+      </svg>
+      Mark all as read
+    </button>
+  </div>
 
-      {/* Filters */}
-      <div className="flex flex-wrap gap-2 mb-4">
-        {["all", "unread", "read"].map((s) => (
-          <button
-            key={s}
-            onClick={() => setStatus(s)}
-            className={`px-4 py-2 rounded-md border ${
-              status === s ? "bg-purple-600 text-white" : "bg-gray-100"
-            }`}
-          >
-            {s.charAt(0).toUpperCase() + s.slice(1)}
-          </button>
-        ))}
-      </div>
+  {/* Filters */}
+  <div className="flex flex-wrap gap-2 mb-4">
+    {["all", "unread", "read"].map((s) => (
+      <button
+        key={s}
+        onClick={() => setStatus(s)}
+        className={`px-4 py-2 rounded-md border text-sm transition ${
+          status === s ? "bg-purple-600 text-white" : "bg-gray-100 hover:bg-gray-200"
+        }`}
+      >
+        {s.charAt(0).toUpperCase() + s.slice(1)}
+      </button>
+    ))}
+  </div>
 
-      {/* Notification List */}
-      <ul className="space-y-3">
-        {notifications.map((n) => (
-          <li
-            key={n.id}
-            onClick={() => markAsRead(n.id)}
-            className={`p-4 rounded-lg border cursor-pointer transition ${
-              n.isRead
-                ? "bg-gray-100 border-gray-300"
-                : "bg-purple-100 border-purple-400 hover:bg-purple-200"
-            }`}
-          >
-            <div className="font-semibold">{n.title}</div>
-            <div className="text-sm text-gray-600 mt-1">{n.message}</div>
-            <div className="text-xs text-gray-400 mt-1">
-              {new Date(n.createdAt).toLocaleString()}
-            </div>
-          </li>
-        ))}
-      </ul>
+  {/* Notification List */}
+  <ul className="space-y-3">
+    {notifications.map((n) => (
+      <li
+        key={n.id}
+        onClick={() => markAsRead(n.id)}
+        className={`p-4 rounded-lg border cursor-pointer transition text-sm ${
+          n.isRead
+            ? "bg-gray-100 border-gray-300"
+            : "bg-purple-100 border-purple-400 hover:bg-purple-200"
+        }`}
+      >
+        <div className="font-semibold">{n.title}</div>
+        <div className="text-sm text-gray-600 mt-1">{n.message}</div>
+        <div className="text-xs text-gray-400 mt-1">
+          {new Date(n.createdAt).toLocaleString()}
+        </div>
+      </li>
+    ))}
+  </ul>
 
-      {/* Pagination */}
-      <div className="mt-6 flex flex-wrap justify-center gap-2">
-        {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
-          <button
-            key={p}
-            onClick={() => setPage(p)}
-            className={`px-4 py-2 rounded-md border ${
-              p === page ? "bg-purple-600 text-white" : "bg-gray-100"
-            }`}
-          >
-            {p}
-          </button>
-        ))}
-      </div>
-    </div>
+  {/* Pagination */}
+  <div className="mt-6 flex flex-wrap justify-center gap-2">
+    {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+      <button
+        key={p}
+        onClick={() => setPage(p)}
+        className={`px-4 py-2 rounded-md border text-sm transition ${
+          p === page ? "bg-purple-600 text-white" : "bg-gray-100 hover:bg-gray-200"
+        }`}
+      >
+        {p}
+      </button>
+    ))}
+  </div>
+</div>
+
   );
 }

@@ -23,7 +23,7 @@ export async function generateMetadata({
 }
 
 
-export default async function AdminPage ({
+export default async function AdminPage({
   searchParams,
 }: {
   searchParams: Promise<{ [key: string]: string | undefined }>;
@@ -32,35 +32,42 @@ export default async function AdminPage ({
   const exams = await getUpcomingExams(); // Should be an array of exams
 
   return (
-    <div className="p-4 flex gap-4 flex-col md:flex-row">
-      {/* LEFT */}
-      <div className="w-full lg:w-2/3 flex flex-col gap-8">
+    <div className="p-4 flex flex-col lg:flex-row gap-6">
+      {/* LEFT COLUMN */}
+      <div className="w-full lg:w-2/3 flex flex-col gap-6">
         {/* USER CARDS */}
-        <div className="flex gap-4 justify-between flex-wrap">
-          <UserCard type="admin" bgClass="bg-gradient-to-r from-purple-100 to-purple-200" />
-          <UserCard type="student" bgClass="bg-gradient-to-r from-yellow-100 to-yellow-200" />
+        <div className="flex flex-wrap gap-4 justify-between">
+          <UserCard
+            type="admin"
+            bgClass="bg-gradient-to-r from-purple-100 to-purple-200"
+          />
+          <UserCard
+            type="student"
+            bgClass="bg-gradient-to-r from-yellow-100 to-yellow-200"
+          />
         </div>
+
         {/* MIDDLE CHARTS */}
-        <div className="flex gap-4 flex-col lg:flex-row">
-          {/* COUNT CHART */}
-          <div className="w-full lg:w-1/3 h-[450px]">
+        <div className="flex flex-col md:flex-row gap-4">
+          <div className="w-full md:w-1/3 min-h-[300px] h-[450px]">
             <CountChartContainer />
           </div>
-          {/* ATTENDANCE CHART */}
-          <div className="w-full lg:w-2/3 h-[450px]">
+          <div className="w-full md:w-2/3 min-h-[300px] h-[500px]">
             <AttendanceChart />
           </div>
         </div>
+
         {/* BOTTOM CHART */}
-        <div className="w-full h-[500px]">
+        <div className="w-full min-h-[300px] h-[525px]">
           <FinanceChart />
         </div>
       </div>
-      {/* RIGHT */}
-      <div className="w-full lg:w-1/3 flex flex-col gap-8">
-       <ExamCalendar exams={exams}/>
+
+      {/* RIGHT COLUMN */}
+      <div className="w-full lg:w-1/3 flex flex-col gap-6">
+        <ExamCalendar exams={exams} />
         <AdminAnnounView />
       </div>
     </div>
   );
-};
+}

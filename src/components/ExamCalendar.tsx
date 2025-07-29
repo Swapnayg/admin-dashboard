@@ -40,9 +40,13 @@ export default function ExamCalendar({ exams }: { exams: any[] }) {
   );
 
   return (
-    <div className="p-6 bg-white rounded-xl shadow space-y-4">
-      <h2 className="text-xl font-semibold text-gray-800">📆 Upcoming Exams</h2>
+   <div className="p-4 sm:p-6 bg-white rounded-xl shadow space-y-4">
+  {/* Header */}
+  <h2 className="text-lg sm:text-xl font-semibold text-gray-800">📆 Upcoming Exams</h2>
 
+  {/* Calendar */}
+  <div className="w-full overflow-x-auto">
+    <div className="min-w-[300px]">
       <Calendar
         localizer={localizer}
         events={events}
@@ -60,28 +64,28 @@ export default function ExamCalendar({ exams }: { exams: any[] }) {
             English: '#f59e0b',
             General: '#6366f1',
           };
-        let bgColor = '#4f46e5'; // default indigo
-        let textColor = 'white';
+          let bgColor = '#4f46e5';
+          let textColor = 'white';
 
-        // Apply announcement-style color logic
-        switch (event.category) {
+          switch (event.category) {
             case 'Category-I':
-            bgColor = '#EDE9FE'; // Violet
-            textColor = '#6B21A8';
-            break;
+              bgColor = '#EDE9FE';
+              textColor = '#6B21A8';
+              break;
             case 'Category-II':
-            bgColor = '#FEF3C7'; // Amber
-            textColor = '#92400E';
-            break;
+              bgColor = '#FEF3C7';
+              textColor = '#92400E';
+              break;
             case 'Category-III':
-            bgColor = '#D1FAE5'; // Mint
-            textColor = '#34D399';
-            break;
+              bgColor = '#D1FAE5';
+              textColor = '#34D399';
+              break;
             case 'Category-IV':
-            bgColor = '#DBEAFE'; // Blue
-            textColor = '#1D4ED8';
-            break;
-        }
+              bgColor = '#DBEAFE';
+              textColor = '#1D4ED8';
+              break;
+          }
+
           return {
             style: {
               backgroundColor: bgColor,
@@ -98,71 +102,84 @@ export default function ExamCalendar({ exams }: { exams: any[] }) {
             <div title={event.title}>
               <div className="text-sm font-semibold truncate">{event.title}</div>
               <div className="flex flex-wrap gap-1 mt-1">
-                <span className="text-xs bg-white text-purple-700 px-1.5 py-0.5 rounded-full">📘 {event.subject}</span>
-                <span className="text-xs bg-white text-emerald-700 px-1.5 py-0.5 rounded-full">🏷 {event.category}</span>
+                <span className="text-xs bg-white text-purple-700 px-1.5 py-0.5 rounded-full whitespace-nowrap">
+                  📘 {event.subject}
+                </span>
+                <span className="text-xs bg-white text-emerald-700 px-1.5 py-0.5 rounded-full whitespace-nowrap">
+                  🏷 {event.category}
+                </span>
               </div>
             </div>
           ),
         }}
       />
+    </div>
+  </div>
 
-      {/* Modal for Exam Details */}
-      <Transition appear show={!!selectedExam} as={Fragment}>
-        <Dialog as="div" className="relative z-50" onClose={() => setSelectedExam(null)}>
+  {/* Modal for Exam Details */}
+  <Transition appear show={!!selectedExam} as={Fragment}>
+    <Dialog as="div" className="relative z-50" onClose={() => setSelectedExam(null)}>
+      <Transition.Child
+        as={Fragment}
+        enter="ease-out duration-300"
+        enterFrom="opacity-0"
+        enterTo="opacity-100"
+        leave="ease-in duration-200"
+        leaveFrom="opacity-100"
+        leaveTo="opacity-0"
+      >
+        <div className="fixed inset-0 bg-black bg-opacity-30" />
+      </Transition.Child>
+
+      <div className="fixed inset-0 overflow-y-auto">
+        <div className="flex min-h-full items-center justify-center p-4">
           <Transition.Child
             as={Fragment}
             enter="ease-out duration-300"
-            enterFrom="opacity-0"
-            enterTo="opacity-100"
+            enterFrom="opacity-0 scale-95"
+            enterTo="opacity-100 scale-100"
             leave="ease-in duration-200"
-            leaveFrom="opacity-100"
-            leaveTo="opacity-0"
+            leaveFrom="opacity-100 scale-100"
+            leaveTo="opacity-0 scale-95"
           >
-            <div className="fixed inset-0 bg-black bg-opacity-30" />
+            <Dialog.Panel className="bg-white w-full max-w-md sm:max-w-lg rounded-xl p-6 shadow-xl space-y-4">
+              <Dialog.Title className="text-lg font-bold text-gray-800">
+                {selectedExam?.title}
+              </Dialog.Title>
+              <div className="text-sm text-gray-600 space-y-1">
+                <p><strong>Subject:</strong> {selectedExam?.subject?.name}</p>
+                <p><strong>Category:</strong> {selectedExam?.category?.catName}</p>
+                <p><strong>Grades:</strong> {selectedExam?.grades.map((g: { level: any }) => g.level).join(', ')}</p>
+                <p>
+                  <strong>Start:</strong>{' '}
+                  {isValid(new Date(selectedExam?.startTime))
+                    ? format(new Date(selectedExam.startTime), 'PPpp')
+                    : 'N/A'}
+                </p>
+                <p>
+                  <strong>End:</strong>{' '}
+                  {isValid(new Date(selectedExam?.endTime))
+                    ? format(new Date(selectedExam.endTime), 'PPpp')
+                    : 'N/A'}
+                </p>
+                <p><strong>Time Limit:</strong> {selectedExam?.timeLimit} mins</p>
+                <p><strong>Total Marks:</strong> {selectedExam?.totalMarks}</p>
+              </div>
+              <div className="flex justify-end">
+                <button
+                  onClick={() => setSelectedExam(null)}
+                  className="text-sm px-4 py-1.5 rounded-md bg-indigo-600 text-white hover:bg-indigo-700"
+                >
+                  Close
+                </button>
+              </div>
+            </Dialog.Panel>
           </Transition.Child>
+        </div>
+      </div>
+    </Dialog>
+  </Transition>
+</div>
 
-          <div className="fixed inset-0 overflow-y-auto">
-            <div className="flex min-h-full items-center justify-center p-4">
-              <Transition.Child
-                as={Fragment}
-                enter="ease-out duration-300"
-                enterFrom="opacity-0 scale-95"
-                enterTo="opacity-100 scale-100"
-                leave="ease-in duration-200"
-                leaveFrom="opacity-100 scale-100"
-                leaveTo="opacity-0 scale-95"
-              >
-                <Dialog.Panel className="bg-white max-w-md w-full rounded-xl p-6 shadow-xl space-y-4">
-                  <Dialog.Title className="text-lg font-bold text-gray-800">
-                    {selectedExam?.title}
-                  </Dialog.Title>
-                  <div className="text-sm text-gray-600 space-y-1">
-                    <p><strong>Subject:</strong> {selectedExam?.subject?.name}</p>
-                    <p><strong>Category:</strong> {selectedExam?.category?.catName}</p>
-                    <p><strong>Grades:</strong> {selectedExam?.grades.map((g: { level: any }) => g.level).join(', ')}</p>
-                    <p>
-                      <strong>Start:</strong> {isValid(new Date(selectedExam?.startTime)) ? format(new Date(selectedExam.startTime), 'PPpp') : 'N/A'}
-                    </p>
-                    <p>
-                      <strong>End:</strong> {isValid(new Date(selectedExam?.endTime)) ? format(new Date(selectedExam.endTime), 'PPpp') : 'N/A'}
-                    </p>
-                    <p><strong>Time Limit:</strong> {selectedExam?.timeLimit} mins</p>
-                    <p><strong>Total Marks:</strong> {selectedExam?.totalMarks}</p>
-                  </div>
-                  <div className="flex justify-end">
-                    <button
-                      onClick={() => setSelectedExam(null)}
-                      className="text-sm px-4 py-1.5 rounded-md bg-indigo-600 text-white hover:bg-indigo-700"
-                    >
-                      Close
-                    </button>
-                  </div>
-                </Dialog.Panel>
-              </Transition.Child>
-            </div>
-          </div>
-        </Dialog>
-      </Transition>
-    </div>
   );
 }

@@ -146,79 +146,65 @@ const QuizBuilder = () => {
     <div className="container mx-auto px-4 py-8 max-w-4xl">
       <div className="mb-8">
         {/* Header */}
-        <Card className="mb-8 bg-slate-800 text-white border-0 shadow-lg flex justify-center items-center min-h-[150px]">
-  <CardHeader className="text-center">
-    <CardTitle className="text-3xl font-bold mb-2">Quiz Builder</CardTitle>
-    <p className="text-slate-300">Create engaging quizzes with ease</p>
-  </CardHeader>
-</Card>
-
+        <Card className="mb-8 bg-slate-800 text-white border-0 shadow-lg flex justify-center items-center min-h-[150px] text-center">
+          <CardHeader>
+            <CardTitle className="text-2xl sm:text-3xl font-bold mb-2">Quiz Builder</CardTitle>
+            <p className="text-slate-300 text-sm sm:text-base">Create engaging quizzes with ease</p>
+          </CardHeader>
+        </Card>
       </div>
 
       {/* Step Indicators */}
       <div className="mb-8">
-        <div className="flex items-center justify-center space-x-8">
+        <div className="flex flex-col sm:flex-row items-center sm:justify-center sm:space-x-8 space-y-4 sm:space-y-0">
           {steps.map((step, index) => (
-             <React.Fragment key={step.number}>
-            <div className={`flex items-center ${currentStep >= step.number ? 'text-slate-800' : 'text-slate-400'}`}>
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center border-2 ${
-                currentStep >= step.number ? 'bg-slate-800 border-slate-800 text-white' : 'border-slate-400'
-              }`}>
-                {step.number}
+            <React.Fragment key={step.number}>
+              <div className={`flex items-center ${currentStep >= step.number ? 'text-slate-800' : 'text-slate-400'}`}>
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center border-2 ${
+                  currentStep >= step.number ? 'bg-slate-800 border-slate-800 text-white' : 'border-slate-400'
+                }`}>
+                  {step.number}
+                </div>
+                <span className="ml-2 font-medium text-sm sm:text-base">{step.name}</span>
               </div>
-              <span className="ml-2 font-medium">{step.name}</span>
-            </div>
-            {index < steps.length - 1 && (
-              <div className={`w-16 h-0.5 ${currentStep >= step.number + 1 ? 'bg-slate-800' : 'bg-slate-300'}`}></div>
-            )}
-          </React.Fragment>
+              {index < steps.length - 1 && (
+                <div className={`hidden sm:block w-16 h-0.5 ${currentStep >= step.number + 1 ? 'bg-slate-800' : 'bg-slate-300'}`}></div>
+              )}
+            </React.Fragment>
           ))}
         </div>
       </div>
 
       {/* Step Content */}
-     
-        {/* <CardHeader>
-          {/* <CardTitle className="text-slate-900">
-            Step {currentStep}: {steps[currentStep - 1].name}
-          </CardTitle>
-        </CardHeader> */}
-      
-          {currentStep === 1 && (
-            <MetadataStep quizData={quizData} setQuizData={setQuizData} questions={questions} setQuestions={setQuestions}  />
-          )}
-          {currentStep === 2 && (
-            <QuestionsStep
-              questions={questions}
-              setQuestions={setQuestions}
-              quizData={quizData}
-            />
-          )}
-          {currentStep === 3 && (
-            <ReviewStep quizData={quizData} questions={questions} />
-          )}
-       
+      {currentStep === 1 && (
+        <MetadataStep quizData={quizData} setQuizData={setQuizData} questions={questions} setQuestions={setQuestions} />
+      )}
+      {currentStep === 2 && (
+        <QuestionsStep questions={questions} setQuestions={setQuestions} quizData={quizData} />
+      )}
+      {currentStep === 3 && (
+        <ReviewStep quizData={quizData} questions={questions} />
+      )}
 
       {/* Navigation */}
-      <div className="flex justify-between mt-5">
+      <div className="flex flex-col sm:flex-row justify-between mt-5 gap-4">
         {currentStep > 1 && (
           <Button
             variant="outline"
             onClick={handlePrevious}
             disabled={isSubmitting}
-            className="border-slate-300 text-slate-700 hover:bg-slate-50"
+            className="border-slate-300 text-slate-700 hover:bg-slate-50 w-full sm:w-auto"
           >
             Back
           </Button>
         )}
-        
-        {currentStep === 1 && <div />}
-        
+        {currentStep === 1 && <div className="hidden sm:block" />}
+
         {currentStep < 3 ? (
           <Button
             onClick={handleNext}
             disabled={!canProceedToNext() || isSubmitting}
-            className="bg-slate-600 hover:bg-slate-700 text-white disabled:bg-slate-300 disabled:cursor-not-allowed"
+            className="bg-slate-600 hover:bg-slate-700 text-white disabled:bg-slate-300 disabled:cursor-not-allowed w-full sm:w-auto"
           >
             {currentStep === 1 ? 'Next Step' : 'Review Quiz'}
           </Button>
@@ -226,7 +212,7 @@ const QuizBuilder = () => {
           <Button
             onClick={handleSubmit}
             disabled={isSubmitting}
-            className="bg-slate-600 hover:bg-slate-700 text-white disabled:bg-slate-300"
+            className="bg-slate-600 hover:bg-slate-700 text-white disabled:bg-slate-300 w-full sm:w-auto"
           >
             {isSubmitting ? 'Saving...' : 'Submit Quiz'}
           </Button>

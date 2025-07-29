@@ -56,73 +56,78 @@ export default function ExamAttendanceChart() {
   }, [ gradeId, subjectId]);
 
   return (
-    <div className="bg-white p-6 rounded-xl shadow-md space-y-4">
-      <div className="flex justify-between flex-wrap gap-3">
-        <h2 className="text-xl font-semibold text-gray-800">📊 Exam Details</h2>
-        <div className="w-full flex justify-end mb-4">
-          <div className="flex gap-2 flex-wrap justify-end">
-            <select
-              value={gradeId}
-              onChange={(e) => setGradeId(e.target.value)}
-              className="border rounded px-2 py-1 text-sm"
-            >
-              <option value="all">All Grades</option>
-              {grades.map((grade) => (
-                <option key={grade.id} value={grade.id}>
-                  {grade.level}
-                </option>
-              ))}
-            </select>
+   <div className="bg-white p-4 sm:p-6 rounded-xl shadow-md space-y-4">
+  {/* Header and Filters */}
+  <div className="flex flex-col md:flex-row justify-between gap-4 md:items-center">
+    <h2 className="text-lg sm:text-xl font-semibold text-gray-800">📊 Exam Details</h2>
+    
+    <div className="flex flex-wrap gap-2 justify-end">
+      <select
+        value={gradeId}
+        onChange={(e) => setGradeId(e.target.value)}
+        className="border rounded px-2 py-1 text-sm"
+      >
+        <option value="all">All Grades</option>
+        {grades.map((grade) => (
+          <option key={grade.id} value={grade.id}>
+            {grade.level}
+          </option>
+        ))}
+      </select>
 
-            <select
-              value={subjectId}
-              onChange={(e) => setSubjectId(e.target.value)}
-              className="border p-2 rounded text-sm"
-            >
-              <option value="all">All Subjects</option>
-              {subjects.map((subj) => (
-                <option key={subj.id} value={subj.id}>
-                  {subj.name}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
+      <select
+        value={subjectId}
+        onChange={(e) => setSubjectId(e.target.value)}
+        className="border rounded px-2 py-1 text-sm"
+      >
+        <option value="all">All Subjects</option>
+        {subjects.map((subj) => (
+          <option key={subj.id} value={subj.id}>
+            {subj.name}
+          </option>
+        ))}
+      </select>
+    </div>
+  </div>
 
-      </div>
-
-      {loading ? (
-        <p className="text-gray-500">Loading...</p>
-      ) : data.length === 0 ? (
-        <p className="text-gray-500">No attendance data available.</p>
-      ) : (
+  {/* Chart or Messages */}
+  {loading ? (
+    <p className="text-gray-500">Loading...</p>
+  ) : data.length === 0 ? (
+    <p className="text-gray-500">No attendance data available.</p>
+  ) : (
+    <div className="w-full overflow-x-auto">
+      <div className="min-w-[600px]">
         <ResponsiveContainer width="100%" height={400}>
           <BarChart
             data={data}
             barCategoryGap="20%"
-            margin={{ top: 30, right: 30, left: 10, bottom: 40 }}
+            margin={{ top: 30, right: 30, left: 10, bottom: 60 }}
           >
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis
               dataKey="examTitle"
               interval={0}
-              angle={-20}
+              angle={-25}
               textAnchor="end"
-              tick={{ fontSize: 12 }}
-              height={60}
+              tick={{ fontSize: 11 }}
+              height={80}
             />
             <YAxis allowDecimals={false} />
             <Tooltip />
             <Legend />
             <Bar dataKey="present" stackId="a" fill="#FACC15" name="Present">
-              <LabelList dataKey="present" position="top" fontSize={12} fill="#FACC15" />
+              <LabelList dataKey="present" position="top" fontSize={11} fill="#000" />
             </Bar>
             <Bar dataKey="absent" stackId="a" fill="#38BDF8" name="Absent">
-              <LabelList dataKey="absent" position="top" fontSize={12} fill="#38BDF8" />
+              <LabelList dataKey="absent" position="top" fontSize={11} fill="#000" />
             </Bar>
           </BarChart>
         </ResponsiveContainer>
-      )}
+      </div>
     </div>
+  )}
+</div>
+
   );
 }

@@ -314,30 +314,32 @@ const exams: ExamList[] = data.map(exam => ({
 
 
   return (
-    <div className="bg-white p-4 rounded-md flex-1 m-4 mt-0">
+    <div className="bg-white p-4 rounded-md flex-1 m-2 sm:m-4 mt-0">
       {/* TOP */}
-      <div className="flex items-center justify-between">
-        <h1 className="hidden md:block text-lg font-semibold">All Exams</h1>
-        <div className="flex flex-col md:flex-row items-center gap-4 w-full md:w-auto">
-          <TableSearch />
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4">
+        <h1 className="text-lg font-semibold hidden md:block">All Exams</h1>
 
-            <div className="flex items-center gap-4 self-end">
-            {/* 👉 New Assign Students Button */}
-            {(role === "admin") && (
-              <AssignStudentsButton />
-            )}
+        <div className="flex flex-col sm:flex-row sm:items-center gap-4 w-full md:w-auto">
+          {/* Search Input */}
+          <div className="w-full sm:w-auto">
+            <TableSearch />
+          </div>
 
-            {(role === "admin") && (
-              <FormContainer table="exam" type="create" />
-            )}
+          {/* Buttons */}
+          <div className="flex flex-wrap items-center justify-end gap-3 sm:gap-4">
+            {role === "admin" && <AssignStudentsButton />}
+            {role === "admin" && <FormContainer table="exam" type="create" />}
           </div>
         </div>
       </div>
+
       {/* LIST */}
       <Table columns={columns} renderRow={renderRow} data={exams} />
+
       {/* PAGINATION */}
       <Pagination page={p} count={count} />
     </div>
+
   );
 };
 

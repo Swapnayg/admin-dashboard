@@ -179,56 +179,46 @@ const createQuiz = async (exmId: string) => {
 }, [quizData, setQuizData]);
 
   return (
+
     <div className="space-y-6">
-       <QuizExistsDialog
-        open={showPrompt}
-        onConfirm={handleConfirm}
-        onCancel={handleCancel}
-      />
+      <QuizExistsDialog open={showPrompt} onConfirm={handleConfirm} onCancel={handleCancel} />
 
-
+      {/* Basic Information Card */}
       <Card>
         <CardHeader>
           <CardTitle className="text-slate-800">Basic Information</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
             <div>
               <Label className="text-slate-700">Exam</Label>
-
-          <select
-            className="ring-[1.5px] ring-gray-300 p-2 rounded-md text-sm w-full flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1"
-            onChange={handleExamOnchange} value={quizData.examId}
-          >
-            <option value="" disabled selected className="text-gray-400">
-              Select an Exam
-            </option>
-              {exams.map((exam: { id: string; title: string }) => (
-                <option
-                  key={exam.id}
-                  value={exam.id}
-                  className="text-sm text-gray-700 hover:bg-blue-100 px-3 py-1"
-                >
-                  {exam.title}
-                </option>
-              ))}
-          </select>
-          </div>
-          <div>
-            <Label htmlFor="title" className="text-slate-700">Quiz Title *</Label>
-            <Input
-              id="title"
-              value={quizData.title}
-              readOnly
-              onChange={(e) => handleInputChange('title', e.target.value)}
-              placeholder="Enter quiz title"
-              className="border-slate-300 focus:border-slate-500"
-            />
-          </div>
+              <select
+                className="w-full ring-[1.5px] ring-gray-300 p-2 rounded-md text-sm border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1"
+                onChange={handleExamOnchange}
+                value={quizData.examId}
+              >
+                <option value="" disabled selected className="text-gray-400">Select an Exam</option>
+                {exams.map((exam: { id: string; title: string }) => (
+                  <option key={exam.id} value={exam.id} className="text-sm text-gray-700">
+                    {exam.title}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <Label htmlFor="title" className="text-slate-700">Quiz Title *</Label>
+              <Input
+                id="title"
+                value={quizData.title}
+                readOnly
+                onChange={(e) => handleInputChange('title', e.target.value)}
+                placeholder="Enter quiz title"
+                className="w-full border-slate-300 focus:border-slate-500"
+              />
+            </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
             <div>
               <Label htmlFor="category" className="text-slate-700">Category</Label>
               <Input
@@ -237,10 +227,9 @@ const createQuiz = async (exmId: string) => {
                 readOnly
                 onChange={(e) => handleInputChange('category', e.target.value)}
                 placeholder="e.g., Science"
-                className="border-slate-300 focus:border-slate-500"
+                className="w-full border-slate-300 focus:border-slate-500"
               />
             </div>
-
             <div>
               <Label htmlFor="grade" className="text-slate-700">Grade</Label>
               <Input
@@ -249,10 +238,9 @@ const createQuiz = async (exmId: string) => {
                 readOnly
                 onChange={(e) => handleInputChange('grades', e.target.value.split(", ").map(Number))}
                 placeholder="e.g., 10th Grade"
-                className="border-slate-300 focus:border-slate-500"
+                className="w-full border-slate-300 focus:border-slate-500"
               />
             </div>
-
             <div>
               <Label htmlFor="subject" className="text-slate-700">Subject</Label>
               <Input
@@ -261,19 +249,20 @@ const createQuiz = async (exmId: string) => {
                 readOnly
                 onChange={(e) => handleInputChange('subject', e.target.value)}
                 placeholder="e.g., Physics"
-                className="border-slate-300 focus:border-slate-500"
+                className="w-full border-slate-300 focus:border-slate-500"
               />
             </div>
           </div>
         </CardContent>
       </Card>
 
+      {/* Quiz Configuration Card */}
       <Card>
         <CardHeader>
           <CardTitle className="text-slate-800">Quiz Configuration</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <Label htmlFor="totalQuestions" className="text-slate-700">Total Questions *</Label>
               <Input
@@ -283,7 +272,7 @@ const createQuiz = async (exmId: string) => {
                 value={quizData.totalQuestions}
                 readOnly
                 onChange={(e) => handleInputChange('totalQuestions', parseInt(e.target.value) || 0)}
-                className="border-slate-300 focus:border-slate-500"
+                className="w-full border-slate-300 focus:border-slate-500"
               />
             </div>
 
@@ -296,22 +285,23 @@ const createQuiz = async (exmId: string) => {
                 value={quizData.totalMarks}
                 readOnly
                 onChange={(e) => handleInputChange('totalMarks', parseInt(e.target.value) || 0)}
-                className="border-slate-300 focus:border-slate-500"
+                className="w-full border-slate-300 focus:border-slate-500"
               />
             </div>
-             <div>
+
+            <div>
               <Label htmlFor="timeLimit" className="text-slate-700">Time Limit *</Label>
               <Input
                 id="timeLimit"
                 value={quizData.timeLimit}
                 readOnly
                 onChange={(e) => handleInputChange('timeLimit', parseInt(e.target.value) || 0)}
-                className="border-slate-300 focus:border-slate-500"
+                className="w-full border-slate-300 focus:border-slate-500"
               />
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <Label htmlFor="startDateTime" className="text-slate-700">Start Date/Time</Label>
               <Input
@@ -323,7 +313,7 @@ const createQuiz = async (exmId: string) => {
                     : quizData.startDateTime
                 }
                 readOnly
-                className="border-slate-300 bg-slate-50 text-slate-600"
+                className="w-full border-slate-300 bg-slate-50 text-slate-600"
               />
             </div>
 
@@ -332,13 +322,13 @@ const createQuiz = async (exmId: string) => {
               <Input
                 id="endDateTime"
                 type="datetime-local"
-                 value={
+                value={
                   quizData.endDateTime instanceof Date
                     ? quizData.endDateTime.toISOString().slice(0, 16)
                     : quizData.endDateTime
                 }
                 readOnly
-                className="border-slate-300 bg-slate-50 text-slate-600"
+                className="w-full border-slate-300 bg-slate-50 text-slate-600"
               />
             </div>
           </div>
@@ -353,6 +343,7 @@ const createQuiz = async (exmId: string) => {
         </CardContent>
       </Card>
     </div>
+
   );
 };
 

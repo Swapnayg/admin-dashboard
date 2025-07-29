@@ -180,34 +180,33 @@ const handleSubmit = async () => {
   }));
 
   return (
-    <div className="flex justify-between items-start mb-8">
-      <div>
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Student Management</h1>
-        <p className="text-gray-600">Manage quiz registrations and payment approvals</p>
-      </div>
- <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button className="bg-blue-600 hover:bg-blue-700 text-white">
-          <Plus className="w-4 h-4 mr-2" />
-          Add Student
-        </Button>
-      </DialogTrigger>
+    <div className="flex flex-col lg:flex-row justify-between items-start gap-4 mb-8">
+  <div>
+    <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-1">Student Management</h1>
+    <p className="text-sm md:text-base text-gray-600">Manage quiz registrations and payment approvals</p>
+  </div>
 
-      <DialogContent className="max-w-3xl px-6 py-6">
-        <DialogHeader>
-          <DialogTitle className="text-lg">Add Student</DialogTitle>
-        </DialogHeader>
+  <Dialog open={open} onOpenChange={setOpen}>
+    <DialogTrigger asChild>
+      <Button className="bg-blue-600 hover:bg-blue-700 text-white w-full sm:w-auto">
+        <Plus className="w-4 h-4 mr-2" />
+        Add Student
+      </Button>
+    </DialogTrigger>
 
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            handleSubmit();
-          }}
-        >
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-3">
+    <DialogContent className="w-full max-w-3xl px-4 sm:px-6 py-6 overflow-y-auto max-h-[90vh]">
+      <DialogHeader>
+        <DialogTitle className="text-lg">Add Student</DialogTitle>
+      </DialogHeader>
 
-             {/* Then Name */}
-            <div>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleSubmit();
+        }}
+      >
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
               <Label>Name <span className="text-red-500">*</span></Label>
               <Input
                 name="name"
@@ -419,33 +418,34 @@ const handleSubmit = async () => {
                 <img src={imagePreview} alt="Preview" className="mt-2 h-20 rounded" />
               )}
             </div>
-          </div>
+        </div>
 
-          <div className="flex justify-end gap-2 mt-6">
-            <Button type="button" variant="outline" onClick={() => setOpen(false)}>Cancel</Button>
-            <Button type="submit" className="bg-green-600 text-white" disabled={loading}>
-              {loading ? "Submitting..." : "Submit"}
-            </Button>
-          </div>
-          
-        </form>
-      </DialogContent>
-    </Dialog>
-      {/* AlertDialog for Success/Error */}
+        <div className="flex flex-col sm:flex-row justify-end gap-2 mt-6">
+          <Button type="button" variant="outline" onClick={() => setOpen(false)} className="w-full sm:w-auto">
+            Cancel
+          </Button>
+          <Button type="submit" className="bg-green-600 text-white w-full sm:w-auto" disabled={loading}>
+            {loading ? "Submitting..." : "Submit"}
+          </Button>
+        </div>
+      </form>
+    </DialogContent>
+  </Dialog>
+
+  {/* AlertDialog for Success/Error */}
   <AlertDialog open={alertOpen} onOpenChange={setAlertOpen}>
     <AlertDialogContent>
       <AlertDialogHeader>
         <AlertDialogTitle>Notice</AlertDialogTitle>
-        <AlertDialogDescription>
-          {alertMessage}
-        </AlertDialogDescription>
+        <AlertDialogDescription>{alertMessage}</AlertDialogDescription>
       </AlertDialogHeader>
       <AlertDialogFooter>
         <AlertDialogAction onClick={() => setAlertOpen(false)}>OK</AlertDialogAction>
       </AlertDialogFooter>
     </AlertDialogContent>
   </AlertDialog>
-    </div>
+</div>
+
   );
 };
 

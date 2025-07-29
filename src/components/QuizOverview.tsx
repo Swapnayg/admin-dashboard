@@ -78,30 +78,35 @@ const QuizOverview = () => {
 
 
   return (
-    <div className="mb-8">
-      <div className="mb-4">
-        <h2 className="text-xl font-bold text-gray-900 mb-1">All Quizzes Overview</h2>
-        <p className="text-gray-600">Registration and payment statistics</p>
-      </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-        {overviewStats.map((stat, index) => {
-          const IconComponent = stat.icon;
-          return (
-            <Card key={index} className="p-4 bg-white border border-gray-200">
-              <div className="flex items-center justify-between mb-3">
-                <div className={`w-10 h-10 rounded-lg ${stat.iconBg} flex items-center justify-center`}>
-                  <IconComponent className={`w-5 h-5 ${stat.iconColor}`} />
-                </div>
-              </div>
-              <div>
-                <p className="text-sm text-gray-600 mb-1">{stat.title}</p>
-                <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
-              </div>
-            </Card>
-          );
-        })}
-      </div>
-    </div>
+  <div className="mb-8">
+  <div className="mb-4">
+    <h2 className="text-xl font-bold text-gray-900 mb-1">All Quizzes Overview</h2>
+    <p className="text-gray-600">Registration and payment statistics</p>
+  </div>
+
+  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-4">
+    {overviewStats.map((stat, index) => {
+      const IconComponent = stat.icon;
+      return (
+        <Card
+          key={index}
+          className="p-4 bg-white border border-gray-200 shadow-sm hover:shadow-md transition-shadow rounded-lg"
+        >
+          <div className="flex items-center justify-between mb-3">
+            <div className={`w-10 h-10 rounded-lg ${stat.iconBg} flex items-center justify-center`}>
+              <IconComponent className={`w-5 h-5 ${stat.iconColor}`} />
+            </div>
+          </div>
+          <div>
+            <p className="text-sm text-gray-600 mb-1">{stat.title}</p>
+            <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
+          </div>
+        </Card>
+      );
+    })}
+  </div>
+</div>
+
   );
 };
 

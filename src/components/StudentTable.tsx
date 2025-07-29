@@ -178,193 +178,201 @@ const displayStudents = filteredStudents !== null && filteredStudents !== undefi
 
 //console.log(displayStudents);
   return (
-    <div>
-      <div className="flex flex-col sm:flex-row gap-4 mb-6">
-        <div className="flex-1">
-          <Input placeholder="Search by name, email, CNIC, or roll number..." value={search} 
-            onChange={e => setSearch(e.target.value)} className="w-full"/>
-        </div>
-        <div className="flex gap-2">
-          <Select value={quizFilter} onValueChange={setQuizFilter}>
-            <SelectTrigger className="w-40">
-              <SelectValue placeholder="All Quizzes" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all-quizzes">All Quizzes</SelectItem>
-              <SelectItem value="noquizz">No Quiz</SelectItem>
-              <SelectItem value="mathematics">Mathematics Quiz</SelectItem>
-              <SelectItem value="science">Science Quiz</SelectItem>
-              <SelectItem value="english">English Quiz</SelectItem>
-              <SelectItem value="history">History Quiz</SelectItem>
-              <SelectItem value="geography">Geography Quiz</SelectItem>
-              <SelectItem value="physics">Physics Quiz</SelectItem>
-              <SelectItem value="chemistry">Chemistry Quiz</SelectItem>
-              <SelectItem value="biology">Biology Quiz</SelectItem>
-              <SelectItem value="computer science">Computer Science Quiz</SelectItem>
-              <SelectItem value="art">Art Quiz</SelectItem>
-            </SelectContent>
-          </Select>
-          <Select value={studentTypeFilter} onValueChange={setStudentTypeFilter}>
-            <SelectTrigger className="w-40">
-              <SelectValue placeholder="All Students" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all-students">All Students</SelectItem>
-              <SelectItem value="First Time">First Time</SelectItem>
-              <SelectItem value="Returning">Returning</SelectItem>
-            </SelectContent>
-          </Select>
+    <div className="mb-8">
+  {/* Filters */}
+  <div className="flex flex-col lg:flex-row gap-4 mb-6">
+    <div className="flex-1">
+      <Input
+        placeholder="Search by name, email, CNIC, or roll number..."
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+        className="w-full"
+      />
+    </div>
+    <div className="flex flex-wrap gap-2">
+      <Select value={quizFilter} onValueChange={setQuizFilter}>
+        <SelectTrigger className="w-40 min-w-[10rem]">
+          <SelectValue placeholder="All Quizzes" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="all-quizzes">All Quizzes</SelectItem>
+          <SelectItem value="noquizz">No Quiz</SelectItem>
+          <SelectItem value="mathematics">Mathematics Quiz</SelectItem>
+          <SelectItem value="science">Science Quiz</SelectItem>
+          <SelectItem value="english">English Quiz</SelectItem>
+          <SelectItem value="history">History Quiz</SelectItem>
+          <SelectItem value="geography">Geography Quiz</SelectItem>
+          <SelectItem value="physics">Physics Quiz</SelectItem>
+          <SelectItem value="chemistry">Chemistry Quiz</SelectItem>
+          <SelectItem value="biology">Biology Quiz</SelectItem>
+          <SelectItem value="computer science">Computer Science Quiz</SelectItem>
+          <SelectItem value="art">Art Quiz</SelectItem>
+        </SelectContent>
+      </Select>
+
+      <Select value={studentTypeFilter} onValueChange={setStudentTypeFilter}>
+        <SelectTrigger className="w-40 min-w-[10rem]">
+          <SelectValue placeholder="All Students" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="all-students">All Students</SelectItem>
+          <SelectItem value="First Time">First Time</SelectItem>
+          <SelectItem value="Returning">Returning</SelectItem>
+        </SelectContent>
+      </Select>
+    </div>
+  </div>
+
+  {/* Students Table */}
+  <Card className="bg-white">
+    <div className="p-4 sm:p-6">
+      <h3 className="text-lg font-semibold text-gray-900 mb-4">
+        Students ({Array.isArray(students) ? students.length : 0})
+      </h3>
+
+      <div className="overflow-x-auto">
+        <table className="w-full text-sm">
+          <thead>
+            <tr className="border-b border-gray-200">
+              <th className="text-left py-3 px-4 font-medium text-gray-600 whitespace-nowrap">Student</th>
+              <th className="text-left py-3 px-4 font-medium text-gray-600 whitespace-nowrap">Type</th>
+              <th className="text-left py-3 px-4 font-medium text-gray-600 whitespace-nowrap">Contact</th>
+              <th className="text-left py-3 px-4 font-medium text-gray-600 whitespace-nowrap">Latest Quiz</th>
+              <th className="text-left py-3 px-4 font-medium text-gray-600 whitespace-nowrap">Payment Status</th>
+              <th className="text-left py-3 px-4 font-medium text-gray-600 whitespace-nowrap">Revenue</th>
+              <th className="text-left py-3 px-4 font-medium text-gray-600 whitespace-nowrap">Actions</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {displayStudents?.map((student) => {
+              const initials = student.name.split(' ').map((n: string) => n[0]).join('');
+              return (
+                <tr key={student.id} className="border-b border-gray-100 hover:bg-gray-50">
+                  <td className="py-4 px-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden">
+                        {student.avatar ? (
+                          <img src={student.avatar} alt={student.name} className="w-10 h-10 object-cover" />
+                        ) : (
+                          <span className="text-gray-600 font-medium">{initials}</span>
+                        )}
+                      </div>
+                      <div className="min-w-[8rem]">
+                        <p className="font-medium text-gray-900">{student.name}</p>
+                        <p className="text-sm text-gray-600">{student.studentId}</p>
+                        <p className="text-sm text-gray-500">{student.rollNumber}</p>
+                      </div>
+                    </div>
+                  </td>
+
+                  <td className="py-4 px-4">{getTypeBadge(student.type)}</td>
+
+                  <td className="py-4 px-4 min-w-[10rem]">
+                    <p className="text-sm text-gray-900">{student.email}</p>
+                    <p className="text-sm text-gray-600">{student.phone}</p>
+                    <p className="text-sm text-gray-500">{student.regNumber}</p>
+                  </td>
+
+                  <td className="py-4 px-4 min-w-[10rem]">
+                    <p className="text-sm font-medium text-gray-900">{student.quiz}</p>
+                    <p className="text-sm font-medium text-gray-900">{student.subject}</p>
+                    <p className="text-sm text-gray-600">{student.date}</p>
+                    <p className="text-sm text-gray-500">{student.fee}</p>
+                  </td>
+
+                  <td className="py-4 px-4 min-w-[8rem]">
+                    {student.paymentStatus === 'Pending' && student.transactionReceipt ? (
+                      <div className="flex flex-col items-start">
+                        <span className="text-yellow-600 font-medium">Pending</span>
+                        <button
+                          className="text-blue-600 underline text-sm"
+                          onClick={() => handleViewReceipt(student.transactionReceipt, student.regNumber)}
+                        >
+                          View Image
+                        </button>
+                      </div>
+                    ) : (
+                      getStatusBadge(student.paymentStatus)
+                    )}
+                  </td>
+
+                  <td className="py-4 px-4 min-w-[6rem]">
+                    <p className="text-sm font-medium text-gray-900">{student.revenue}</p>
+                    <p className="text-sm text-gray-600">{student.quizzes}</p>
+                  </td>
+
+                  <td className="py-4 px-4 min-w-[5rem]">
+                    <div className="flex items-center gap-2">
+                      <Link href={`/list/students/${student.regNumber}`}>
+                        <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                          <Eye className="h-4 w-4" />
+                        </Button>
+                      </Link>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-8 w-8 p-0 text-red-600 hover:text-red-700"
+                        onClick={() => handleDelete(student.studentId)}
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </Card>
+
+  {/* Modal */}
+  {receiptUrl && selectedStudentId && (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+      <div className="bg-white p-4 rounded-lg shadow-lg w-full max-w-md relative">
+        <button
+          className="absolute top-2 right-2 text-gray-500 hover:text-red-600"
+          onClick={closeModal}
+        >
+          ✕
+        </button>
+        <h2 className="text-lg font-semibold mb-3">Transaction Receipt</h2>
+        <img
+          src={receiptUrl}
+          alt="Transaction Receipt"
+          className="w-full max-h-80 object-contain rounded border"
+        />
+        <div className="mt-4 flex justify-end gap-3 flex-wrap">
+          <button
+            onClick={() => handleStatusUpdate("REJECTED")}
+            disabled={loadingStatus === "REJECTED"}
+            className={`px-4 py-2 rounded ${
+              loadingStatus === "REJECTED"
+                ? "bg-red-300 text-red-800 cursor-not-allowed"
+                : "bg-red-100 text-red-700 hover:bg-red-200"
+            }`}
+          >
+            {loadingStatus === "REJECTED" ? "Rejecting..." : "Reject"}
+          </button>
+
+          <button
+            onClick={() => handleStatusUpdate("APPROVED")}
+            disabled={loadingStatus === "APPROVED"}
+            className={`px-4 py-2 rounded ${
+              loadingStatus === "APPROVED"
+                ? "bg-green-300 text-green-800 cursor-not-allowed"
+                : "bg-green-100 text-green-700 hover:bg-green-200"
+            }`}
+          >
+            {loadingStatus === "APPROVED" ? "Accepting..." : "Accept"}
+          </button>
         </div>
       </div>
-      <Card className="bg-white">
-        <div className="p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Students ({Array.isArray(students) ? students.length : 0})</h3>
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b border-gray-200">
-                  <th className="text-left py-3 px-4 font-medium text-gray-600">Student</th>
-                  <th className="text-left py-3 px-4 font-medium text-gray-600">Type</th>
-                  <th className="text-left py-3 px-4 font-medium text-gray-600">Contact</th>
-                  <th className="text-left py-3 px-4 font-medium text-gray-600">Latest Quiz</th>
-                  <th className="text-left py-3 px-4 font-medium text-gray-600">Payment Status</th>
-                  <th className="text-left py-3 px-4 font-medium text-gray-600">Revenue</th>
-                  <th className="text-left py-3 px-4 font-medium text-gray-600">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {displayStudents && Array.isArray(displayStudents) && displayStudents.map((student) => (
-                  <tr key={student.id} className="border-b border-gray-100 hover:bg-gray-50">
-                    <td className="py-4 px-4">
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center">
-                          {student.avatar ? (
-                            <img src={student.avatar} alt={student.name} className="w-10 h-10 rounded-full object-cover" />
-                          ) : (
-                            <span className="text-gray-600 font-medium">
-                              {student.name.split(' ').map((n: string) => n[0]).join('')}
-                            </span>
-                          )}
-                        </div>
-                        <div>
-                          <p className="font-medium text-gray-900">{student.name}</p>
-                          <p className="text-sm text-gray-600">{student.studentId}</p>
-                          <p className="text-sm text-gray-500">{student.rollNumber}</p>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="py-4 px-4">
-                      {getTypeBadge(student.type)}
-                    </td>
-                    <td className="py-4 px-4">
-                      <div>
-                        <p className="text-sm text-gray-900">{student.email}</p>
-                        <p className="text-sm text-gray-600">{student.phone}</p>
-                        <p className="text-sm text-gray-500">{student.regNumber}</p>
-                      </div>
-                    </td>
-                    <td className="py-4 px-4">
-                      <div>
-                        <p className="text-sm font-medium text-gray-900">{student.quiz}</p>
-                        <p className="text-sm font-medium text-gray-900">{student.subject}</p>
-                        <p className="text-sm text-gray-600">{student.date}</p>
-                        <p className="text-sm text-gray-500">{student.fee}</p>
-                      </div>
-                    </td>
-                    <td className="py-4 px-4">
-                      {student.paymentStatus === 'Pending' && student.transactionReceipt ? (
-                        <div className="flex flex-col items-start">
-                          <span className="text-yellow-600 font-medium">Pending</span>
-                          <button
-                            className="text-blue-600 underline text-sm"
-                            onClick={() => handleViewReceipt(student.transactionReceipt, student.regNumber)}
-                          >
-                            View Image
-                          </button>
-                        </div>
-                      ) : (
-                        getStatusBadge(student.paymentStatus)
-                      )}
-                    </td>
-
-                    <td className="py-4 px-4">
-                      <div>
-                        <p className="text-sm font-medium text-gray-900">{student.revenue}</p>
-                        <p className="text-sm text-gray-600">{student.quizzes}</p>
-                      </div>
-                    </td>
-                    <td className="py-4 px-4">
-                      <div className="flex items-center gap-2">
-                        <Link href={`/list/students/${student.regNumber}`}>
-                          <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                            <Eye className="h-4 w-4" />
-                          </Button>
-                        </Link>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="h-8 w-8 p-0 text-red-600 hover:text-red-700"
-                          onClick={() => handleDelete(student.studentId)}
-                        >
-                          <X className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </Card>
-      {receiptUrl && selectedStudentId && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white p-4 rounded-lg shadow-lg w-full max-w-md relative">
-            <button
-              className="absolute top-2 right-2 text-gray-500 hover:text-red-600"
-              onClick={closeModal}
-            >
-              ✕
-            </button>
-
-            <h2 className="text-lg font-semibold mb-3">Transaction Receipt</h2>
-            <img
-              src={receiptUrl}
-              alt="Transaction Receipt"
-              className="w-full max-h-80 object-contain rounded border"
-            />
-
-            <div className="mt-4 flex justify-end gap-3">
-              <button
-                onClick={() => handleStatusUpdate("REJECTED")}
-                disabled={loadingStatus === "REJECTED"}
-                className={`px-4 py-2 rounded ${
-                  loadingStatus === "REJECTED"
-                    ? "bg-red-300 text-red-800 cursor-not-allowed"
-                    : "bg-red-100 text-red-700 hover:bg-red-200"
-                }`}
-              >
-                {loadingStatus === "REJECTED" ? "Rejecting..." : "Reject"}
-              </button>
-
-              <button
-                onClick={() => handleStatusUpdate("APPROVED")}
-                disabled={loadingStatus === "APPROVED"}
-                className={`px-4 py-2 rounded ${
-                  loadingStatus === "APPROVED"
-                    ? "bg-green-300 text-green-800 cursor-not-allowed"
-                    : "bg-green-100 text-green-700 hover:bg-green-200"
-                }`}
-              >
-                {loadingStatus === "APPROVED" ? "Accepting..." : "Accept"}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
-
-    
+  )}
+</div>   
   );
 };
 

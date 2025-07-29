@@ -45,7 +45,7 @@ export function NotificationBell({ username, role, userId }: NotificationBellPro
 
   return (
     <div className="relative">
-      <div
+     <div
         className="bg-white rounded-full w-7 h-7 flex items-center justify-center cursor-pointer"
         onClick={() => setOpen(!open)}
       >
@@ -58,10 +58,12 @@ export function NotificationBell({ username, role, userId }: NotificationBellPro
       </div>
 
       {open && (
-        <div className="absolute right-0 mt-2 w-80 bg-white shadow-lg rounded-xl z-50 p-3">
-            <div className="font-semibold text-gray-800 text-lg mb-2">🔔 Notifications</div>
+        <div className="absolute right-0 mt-2 w-80 max-w-xs sm:max-w-sm bg-white shadow-lg rounded-xl z-50 p-3 translate-x-[25%] sm:translate-x-0">
+    <div className="font-semibold text-gray-800 text-base sm:text-lg mb-2">
+      🔔 Notifications
+    </div>
 
-            <ul className="space-y-3 max-h-64 overflow-y-auto">
+             <ul className="space-y-3 max-h-64 overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-gray-300 hover:scrollbar-thumb-gray-400">
                 {notifications.map((n) => (
                 <li
                     key={n.id}

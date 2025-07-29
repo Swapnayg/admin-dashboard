@@ -36,9 +36,10 @@ const QuestionForm = ({ onSubmit, marksPerQuestion }: QuestionFormProps) => {
 
   const addOption = () => {
     if (options.length < 6) {
+      const uniqueId = `${Date.now()}-${Math.random().toString(36).substr(2, 5)}`;
       setOptions([
         ...options,
-        { id: (options.length + 1).toString(), text: '', isCorrect: false },
+        { id: uniqueId, text: '', isCorrect: false },
       ]);
     }
   };
@@ -149,17 +150,18 @@ const QuestionForm = ({ onSubmit, marksPerQuestion }: QuestionFormProps) => {
   };
 
   return (
-    <Card>
+    <Card className="w-full max-w-3xl mx-auto mt-8">
       <CardHeader>
-        <CardTitle className="text-slate-800">Add New Question</CardTitle>
+        <CardTitle className="text-slate-800 text-xl md:text-2xl">Add New Question</CardTitle>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Question Type */}
           <div>
             <Label className="text-slate-700">Question Type</Label>
             <Select value={questionType} onValueChange={(value: Question['type']) => setQuestionType(value)}>
-              <SelectTrigger className="border-slate-300">
-                <SelectValue />
+              <SelectTrigger className="w-full border-slate-300">
+                <SelectValue placeholder="Select question type" />
               </SelectTrigger>
               <SelectContent className="bg-white border-slate-300">
                 <SelectItem value="MULTIPLE_CHOICE">Multiple Choice</SelectItem>
@@ -171,6 +173,7 @@ const QuestionForm = ({ onSubmit, marksPerQuestion }: QuestionFormProps) => {
             </Select>
           </div>
 
+          {/* Question Text */}
           <div>
             <Label htmlFor="questionText" className="text-slate-700">Question Text *</Label>
             <Textarea
@@ -178,7 +181,7 @@ const QuestionForm = ({ onSubmit, marksPerQuestion }: QuestionFormProps) => {
               value={questionText}
               onChange={(e) => handleQuestionTextChange(e.target.value)}
               placeholder="Enter your question here..."
-              className={`border-slate-300 focus:border-slate-500 ${
+              className={`w-full border-slate-300 focus:border-slate-500 ${
                 errors.questionText ? 'border-red-500 focus:border-red-500' : ''
               }`}
               rows={3}
@@ -191,22 +194,23 @@ const QuestionForm = ({ onSubmit, marksPerQuestion }: QuestionFormProps) => {
             )}
           </div>
 
+          {/* Multiple Choice */}
           {questionType === 'MULTIPLE_CHOICE' ? (
             <div>
               <Label className="text-slate-700">Options (Select the correct answer)</Label>
               <div className="space-y-3 mt-2">
                 {options.map((option, index) => (
-                  <div key={option.id} className="flex items-center gap-3">
+                  <div key={option.id} className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-3">
                     <Checkbox
                       checked={option.isCorrect}
                       onCheckedChange={() => toggleCorrectOption(option.id)}
-                      className="border-slate-300"
+                      className="border-slate-300 mt-1"
                     />
                     <Input
                       value={option.text}
                       onChange={(e) => updateOption(option.id, e.target.value)}
                       placeholder={`Option ${String.fromCharCode(65 + index)}`}
-                      className={`flex-1 border-slate-300 focus:border-slate-500 ${
+                      className={`w-full flex-1 border-slate-300 focus:border-slate-500 ${
                         errors.options ? 'border-red-500 focus:border-red-500' : ''
                       }`}
                     />
@@ -223,14 +227,14 @@ const QuestionForm = ({ onSubmit, marksPerQuestion }: QuestionFormProps) => {
                     )}
                   </div>
                 ))}
-                
+
                 {(errors.options || errors.noCorrectOption) && (
                   <div className="flex items-center gap-1 text-red-600 text-sm">
                     <AlertCircle size={14} />
                     {errors.options || errors.noCorrectOption}
                   </div>
                 )}
-                
+
                 {options.length < 6 && (
                   <Button
                     type="button"
@@ -251,7 +255,7 @@ const QuestionForm = ({ onSubmit, marksPerQuestion }: QuestionFormProps) => {
               <RadioGroup
                 value={trueFalseAnswer}
                 onValueChange={(value: 'true' | 'false') => setTrueFalseAnswer(value)}
-                className="flex gap-6 mt-2"
+                className="flex gap-6 mt-2 flex-wrap"
               >
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="true" id="true" className="border-slate-300" />
@@ -272,7 +276,7 @@ const QuestionForm = ({ onSubmit, marksPerQuestion }: QuestionFormProps) => {
                   value={correctAnswer}
                   onChange={(e) => handleCorrectAnswerChange(e.target.value)}
                   placeholder="Enter the correct answer..."
-                  className={`border-slate-300 focus:border-slate-500 ${
+                  className={`w-full border-slate-300 focus:border-slate-500 ${
                     errors.correctAnswer ? 'border-red-500 focus:border-red-500' : ''
                   }`}
                   rows={3}
@@ -288,7 +292,7 @@ const QuestionForm = ({ onSubmit, marksPerQuestion }: QuestionFormProps) => {
                       ? 'Enter the correct number'
                       : 'Enter the correct answer'
                   }
-                  className={`border-slate-300 focus:border-slate-500 ${
+                  className={`w-full border-slate-300 focus:border-slate-500 ${
                     errors.correctAnswer ? 'border-red-500 focus:border-red-500' : ''
                   }`}
                 />
@@ -302,21 +306,22 @@ const QuestionForm = ({ onSubmit, marksPerQuestion }: QuestionFormProps) => {
             </div>
           )}
 
-          <div className="bg-slate-100 p-3 rounded">
-            <p className="text-sm text-slate-600">
-              This question will be worth <strong>{marksPerQuestion.toFixed(1)} marks</strong>
-            </p>
+          {/* Marks Info */}
+          <div className="bg-slate-100 p-3 rounded text-sm text-slate-600">
+            This question will be worth <strong>{marksPerQuestion.toFixed(1)} marks</strong>
           </div>
 
+          {/* Submit Button */}
           <Button
             type="submit"
-            className="w-full bg-slate-600 hover:bg-slate-700 text-white"
+            className="w-full bg-slate-600 hover:bg-slate-700 text-white mt-2 mb-4"
           >
             Add Question
           </Button>
         </form>
       </CardContent>
     </Card>
+
   );
 };
 

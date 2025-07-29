@@ -96,24 +96,21 @@ const QuestionsStep = ({ questions, setQuestions, quizData }: QuestionsStepProps
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      {/* Top Badge + Info */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
         <div>
           <Badge variant="outline" className="border-slate-300 text-slate-700">
             {questions.length} of {quizData.totalQuestions} questions added
           </Badge>
-          <p className="text-sm text-slate-600 mt-1">
-            {marksPerQuestion.toFixed(1)} marks per question
-          </p>
+          <p className="text-sm text-slate-600 mt-1">{marksPerQuestion.toFixed(1)} marks per question</p>
         </div>
-        
-
       </div>
 
-      {/* Validation Status */}
+      {/* Validation Warning */}
       {!validationStatus.canProceedToReview && questions.length > 0 && (
         <Card className="border-orange-200 bg-orange-50">
           <CardContent className="pt-6">
-            <div className="flex items-start gap-3">
+            <div className="flex flex-col sm:flex-row items-start gap-3">
               <AlertCircle className="text-orange-600 mt-0.5" size={20} />
               <div>
                 <h3 className="font-semibold text-orange-800 mb-2">Complete All Questions Before Review</h3>
@@ -143,21 +140,21 @@ const QuestionsStep = ({ questions, setQuestions, quizData }: QuestionsStepProps
         </Card>
       )}
 
+      {/* Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="bg-slate-100">
+        <TabsList className="bg-slate-100 flex flex-wrap gap-2">
           <TabsTrigger value="list" className="data-[state=active]:bg-slate-600 data-[state=active]:text-white">
             Questions List
           </TabsTrigger>
-          <TabsTrigger 
-            value="add" 
+          <TabsTrigger
+            value="add"
             disabled={!canAddMore}
-            className="data-[state=active]:bg-slate-600 data-[state=active]:text-white"
-          >
+           className="mt-4 sm:mt-0 custom-no-mt-430 data-[state=active]:bg-slate-600 data-[state=active]:text-white">
             <Plus size={16} className="mr-1" />
             Add Question
           </TabsTrigger>
           {editingQuestion && (
-            <TabsTrigger 
+            <TabsTrigger
               value="edit"
               className="data-[state=active]:bg-slate-600 data-[state=active]:text-white"
             >
@@ -167,18 +164,19 @@ const QuestionsStep = ({ questions, setQuestions, quizData }: QuestionsStepProps
           )}
         </TabsList>
 
-        <TabsContent value="list" className="space-y-4">
+        {/* List Tab Content */}
+       <TabsContent value="list" className="space-y-4 mt-4">
           {questions.length === 0 ? (
             <Card>
-              <CardContent className="text-center py-8">
+              <CardContent className="text-center py-8 mt-4">
                 <p className="text-slate-500">No questions added yet.</p>
-                <Button
-                  onClick={() => setActiveTab('add')}
+               <Button
+                  onClick={() => setActiveTab("add")}
                   disabled={!canAddMore}
-                  className="mt-4 bg-slate-600 hover:bg-slate-700 text-white"
+                  className="w-full sm:w-auto mt-4 bg-slate-600 hover:bg-slate-700 text-white flex items-center justify-center text-sm sm:text-base px-4 py-2"
                 >
                   <Plus size={16} className="mr-1" />
-                  Add Your First Question
+                  <span className="truncate">Add Your First Question</span>
                 </Button>
               </CardContent>
             </Card>
@@ -187,22 +185,33 @@ const QuestionsStep = ({ questions, setQuestions, quizData }: QuestionsStepProps
               {questions.map((question, index) => {
                 const isComplete = isQuestionComplete(question);
                 return (
-                  <Card key={question.id} className={!isComplete ? 'border-orange-200' : ''}>
+                  <Card
+                    key={question.id}
+                    className={`${
+                      !isComplete ? "border-orange-200" : ""
+                    } transition-all`}
+                  >
                     <CardHeader className="pb-2">
-                      <div className="flex items-center justify-between">
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                         <CardTitle className="text-lg text-slate-800 flex items-center gap-2">
                           Question {index + 1}
                           {!isComplete && (
-                            <Badge variant="outline" className="border-orange-300 text-orange-700 bg-orange-50">
+                            <Badge
+                              variant="outline"
+                              className="border-orange-300 text-orange-700 bg-orange-50"
+                            >
                               Incomplete
                             </Badge>
                           )}
                         </CardTitle>
-                        <div className="flex items-center gap-2">
+                        <div className="flex flex-wrap gap-2">
                           <Badge className="bg-slate-600 text-white">
-                            {question.type.replace('-', ' ')}
+                            {question.type.replace("-", " ")}
                           </Badge>
-                          <Badge variant="outline" className="border-slate-300 text-slate-700">
+                          <Badge
+                            variant="outline"
+                            className="border-slate-300 text-slate-700"
+                          >
                             {question.marks} marks
                           </Badge>
                           <Button
@@ -224,31 +233,51 @@ const QuestionsStep = ({ questions, setQuestions, quizData }: QuestionsStepProps
                         </div>
                       </div>
                     </CardHeader>
+
                     <CardContent>
-                      <p className="text-slate-700 mb-2">{question.text || 'No question text provided'}</p>
+                      <p className="text-slate-700 mb-2">
+                        {question.text || "No question text provided"}
+                      </p>
+
+                      {/* MCQ Options */}
                       {question.options && (
                         <div className="space-y-1">
                           {question.options.map((option) => (
                             <div
                               key={option.id}
                               className={`p-2 rounded ${
-                                option.isCorrect ? 'bg-green-50 border border-green-200' : 'bg-slate-50'
+                                option.isCorrect
+                                  ? "bg-green-50 border border-green-200"
+                                  : "bg-slate-50"
                               }`}
                             >
-                              {option.text || 'Empty option'} {option.isCorrect && <Badge className="ml-2 bg-green-600">Correct</Badge>}
+                              {option.text || "Empty option"}{" "}
+                              {option.isCorrect && (
+                                <Badge className="ml-2 bg-green-600">Correct</Badge>
+                              )}
                             </div>
                           ))}
                         </div>
                       )}
+
+                      {/* True/False or Text Answer */}
                       {question.correctAnswer && !question.options && (
                         <div className="bg-green-50 border border-green-200 p-2 rounded">
-                          <strong>Correct Answer:</strong> {question.type === 'TRUE_FALSE' ? (question.correctAnswer === 'true' ? 'True' : 'False') : question.correctAnswer}
+                          <strong>Correct Answer:</strong>{" "}
+                          {question.type === "TRUE_FALSE"
+                            ? question.correctAnswer === "true"
+                              ? "True"
+                              : "False"
+                            : question.correctAnswer}
                         </div>
                       )}
+
+                      {/* Incomplete Warning */}
                       {!isComplete && (
                         <div className="bg-orange-50 border border-orange-200 p-2 rounded mt-2">
                           <p className="text-sm text-orange-700">
-                            <strong>⚠️ This question is incomplete:</strong> Please ensure all required fields are filled out.
+                            <strong>⚠️ This question is incomplete:</strong> Please
+                            ensure all required fields are filled out.
                           </p>
                         </div>
                       )}
@@ -256,28 +285,30 @@ const QuestionsStep = ({ questions, setQuestions, quizData }: QuestionsStepProps
                   </Card>
                 );
               })}
-              
+
+              {/* Add Question Button */}
               {canAddMore && (
-                <Button
-                  onClick={() => setActiveTab('add')}
-                  variant="outline"
-                  className="w-full border-slate-300 text-slate-700 hover:bg-slate-50"
-                >
-                  <Plus size={16} className="mr-1" />
-                  Add Another Question
-                </Button>
+                <div className="text-center sm:text-left">
+                  <Button
+                    onClick={() => setActiveTab("add")}
+                    variant="outline"
+                    className="w-full sm:w-auto border-slate-300 text-slate-700 hover:bg-slate-50"
+                  >
+                    <Plus size={16} className="mr-1" />
+                    Add Another Question
+                  </Button>
+                </div>
               )}
             </div>
           )}
         </TabsContent>
 
+        {/* Add Question Form */}
         <TabsContent value="add">
-          <QuestionForm
-            onSubmit={addQuestion}
-            marksPerQuestion={marksPerQuestion}
-          />
+          <QuestionForm onSubmit={addQuestion} marksPerQuestion={marksPerQuestion} />
         </TabsContent>
 
+        {/* Edit Question Form */}
         {editingQuestion && (
           <TabsContent value="edit">
             <EditQuestionForm
@@ -293,6 +324,7 @@ const QuestionsStep = ({ questions, setQuestions, quizData }: QuestionsStepProps
         )}
       </Tabs>
     </div>
+
   );
 };
 
